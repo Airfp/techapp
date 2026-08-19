@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Air-FP — App technicien</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#F5F7F6; --surface:#FFFFFF; --ink:#14201E; --ink-soft:#55645F;
+    --line:#DDE4E1; --teal:#0C8479; --teal-dark:#095F58; --teal-tint:#E3F3F1;
+    --green:#4C8C4A; --green-tint:#EAF3E9; --amber:#B8791A; --amber-tint:#FBF0DE;
+    --red:#C24B3F; --red-tint:#FBEAE7; --radius:14px;
+    --font-display:'Fraunces', serif; --font-body:'Inter', system-ui, sans-serif; --font-mono:'IBM Plex Mono', monospace;
+  }
+  *{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
+  body{margin:0; background:var(--bg); color:var(--ink); font-family:var(--font-body); -webkit-font-smoothing:antialiased;}
+  h1,h2,h3{font-family:var(--font-display); font-weight:600; margin:0;}
+  .wrap{max-width:900px; margin:0 auto; padding:16px 14px 60px;}
+
+  /* ---- sélecteur de technicien (plein écran, 1ère ouverture seulement) ---- */
+  #techPicker{position:fixed; inset:0; background:var(--bg); z-index:100; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:24px;}
+  #techPicker h2{font-size:22px; margin-bottom:6px; text-align:center;}
+  #techPicker p{color:var(--ink-soft); font-size:14px; margin:0 0 24px; text-align:center;}
+  .tech-btn{width:100%; max-width:320px; padding:18px; margin-bottom:12px; border-radius:var(--radius); border:1.5px solid var(--line); background:var(--surface); font-family:var(--font-body); font-size:17px; font-weight:600; color:var(--ink); cursor:pointer; transition:all .15s;}
+  .tech-btn:hover{border-color:var(--teal); background:var(--teal-tint); color:var(--teal-dark);}
+
+  /* ---- header ---- */
+  header.top{display:flex; align-items:center; justify-content:space-between; padding:8px 2px 16px; flex-wrap:wrap; gap:10px;}
+  .brand{font-family:var(--font-display); font-size:18px; font-weight:600; color:var(--teal-dark);}
+  .qui{font-size:12.5px; color:var(--ink-soft);}
+  .qui button{background:none; border:none; color:var(--teal); font-family:var(--font-body); font-size:12.5px; text-decoration:underline; cursor:pointer; padding:0; margin-left:6px;}
+
+  .date-nav{display:flex; align-items:center; justify-content:center; gap:14px; margin-bottom:18px;}
+  .date-nav button{background:var(--surface); border:1.5px solid var(--line); border-radius:10px; width:38px; height:38px; font-size:16px; cursor:pointer; color:var(--teal-dark);}
+  .date-nav button:hover{border-color:var(--teal);}
+  .date-nav .lbl{font-family:var(--font-mono); font-size:14px; text-align:center; min-width:170px;}
+  .date-nav .lbl small{display:block; color:var(--ink-soft); font-size:11px; font-weight:normal;}
+  .today-link{display:block; text-align:center; margin:-10px 0 18px; font-size:12.5px;}
+  .today-link a{color:var(--teal); cursor:pointer; text-decoration:underline;}
+
+  /* ---- colonnes vans ---- */
+  .vans-grid{display:grid; grid-template-columns:1fr 1fr; gap:16px;}
+  @media(max-width:680px){.vans-grid{grid-template-columns:1fr;}}
+  .van-col h3{font-size:14px; font-family:var(--font-mono); text-transform:uppercase; letter-spacing:.04em; color:var(--teal-dark); margin-bottom:10px; padding-bottom:8px; border-bottom:1.5px solid var(--line);}
+  .empty-note{color:var(--ink-soft); font-size:13.5px; font-style:italic; padding:10px 2px;}
+
+  /* ---- carte job ---- */
+  .job-card{background:var(--surface); border:1.5px solid var(--line); border-radius:var(--radius); padding:14px; margin-bottom:12px;}
+  .job-card .heure{font-family:var(--font-mono); font-size:15px; font-weight:600; color:var(--teal-dark);}
+  .job-card .client{font-size:15.5px; font-weight:600; margin:3px 0 2px;}
+  .job-card .adresse{font-size:12.5px; color:var(--ink-soft); margin-bottom:6px;}
+  .job-card .services{font-size:12px; color:var(--ink-soft); margin-bottom:8px;}
+  .badge-statut{display:inline-block; font-size:11px; font-weight:600; padding:3px 9px; border-radius:999px; margin-bottom:10px;}
+  .st-attente{background:var(--line); color:var(--ink-soft);}
+  .st-route{background:var(--teal-tint); color:var(--teal-dark);}
+  .st-arrive{background:var(--amber-tint); color:var(--amber);}
+  .st-cours{background:var(--teal-tint); color:var(--teal-dark);}
+  .st-termine{background:var(--green-tint); color:var(--green);}
+  .st-probleme{background:var(--red-tint); color:var(--red);}
+  .job-actions{display:flex; gap:8px; flex-wrap:wrap;}
+  .btn-action{flex:1; min-width:100px; padding:10px 8px; border-radius:9px; border:1.5px solid var(--teal); background:var(--teal); color:#fff; font-family:var(--font-body); font-size:13px; font-weight:600; cursor:pointer; text-align:center;}
+  .btn-action.secondary{background:var(--surface); color:var(--teal-dark);}
+  .btn-action.photo{background:var(--surface); border-color:var(--line); color:var(--ink-soft);}
+  .btn-action:active{opacity:.75;}
+  .nb-photos{font-size:11px; color:var(--ink-soft); margin-top:6px;}
+
+  /* ---- modal rapport ---- */
+  .modal-bg{position:fixed; inset:0; background:rgba(20,32,30,.55); z-index:200; display:flex; align-items:flex-end; justify-content:center;}
+  @media(min-width:680px){.modal-bg{align-items:center;}}
+  .modal{background:var(--surface); width:100%; max-width:560px; max-height:92vh; overflow-y:auto; border-radius:18px 18px 0 0; padding:22px 20px 30px;}
+  @media(min-width:680px){.modal{border-radius:18px;}}
+  .modal h2{font-size:20px; margin-bottom:2px;}
+  .modal .sub{color:var(--ink-soft); font-size:13px; margin-bottom:16px;}
+  .modal-close{float:right; background:none; border:none; font-size:20px; cursor:pointer; color:var(--ink-soft);}
+  .rapport-row{display:flex; justify-content:space-between; padding:9px 0; border-bottom:1px solid var(--line); font-size:14px;}
+  .rapport-row span:first-child{color:var(--ink-soft);}
+  .rapport-photos{display:grid; grid-template-columns:1fr 1fr 1fr; gap:8px; margin-top:14px;}
+  .rapport-photos img{width:100%; aspect-ratio:1; object-fit:cover; border-radius:8px; border:1px solid var(--line);}
+  .modal-btns{display:flex; gap:10px; margin-top:20px;}
+  .modal-btns button{flex:1; padding:12px; border-radius:10px; font-family:var(--font-body); font-size:14px; font-weight:600; cursor:pointer;}
+  .btn-print{background:var(--teal); color:#fff; border:1.5px solid var(--teal);}
+  .btn-fermer{background:var(--surface); color:var(--ink); border:1.5px solid var(--line);}
+
+  input[type=file]{display:none;}
+  .toast{position:fixed; bottom:18px; left:50%; transform:translateX(-50%); background:var(--ink); color:#fff; padding:10px 18px; border-radius:10px; font-size:13px; z-index:300; opacity:0; transition:opacity .25s;}
+  .toast.show{opacity:1;}
+
+  @media print{
+    body *{visibility:hidden;}
+    #modalRapport, #modalRapport *{visibility:visible;}
+    #modalRapport{position:absolute; inset:0;}
+    .modal-btns, .modal-close{display:none;}
+  }
+</style>
+</head>
+<body>
+
+<div id="techPicker">
+  <h2>Qui utilise l'app?</h2>
+  <p>Choisis ton nom — tu n'auras pas à le refaire à chaque ouverture.</p>
+  <div id="techBtns"></div>
+</div>
+
+<div class="wrap">
+  <header class="top">
+    <div class="brand">Air-FP · App technicien</div>
+    <div class="qui">👤 <strong id="techNomActuel"></strong><button id="btnChangerTech">changer</button></div>
+  </header>
+
+  <div class="date-nav">
+    <button id="btnPrev">‹</button>
+    <div class="lbl" id="dateLbl"></div>
+    <button id="btnNext">›</button>
+  </div>
+  <div class="today-link"><a id="btnAujourdhui">Revenir à aujourd'hui</a></div>
+
+  <div class="vans-grid" id="vansGrid">
+    <p class="empty-note">Chargement…</p>
+  </div>
+</div>
+
+<div id="modalRapportBg" class="modal-bg" style="display:none;">
+  <div class="modal" id="modalRapport"></div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const SUPABASE_URL = 'https://hlcvuhwqlqytmnleqgqw.supabase.co';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhsY3Z1aHdxbHF5dG1ubGVxZ3F3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQ3NDA3NjAsImV4cCI6MjEwMDMxNjc2MH0.vli-DqA-nNXdRos3fr9jQINoPvlcE4Ca0dJoV_oUQO4';
+const JOURS = ['Dimanche','Lundi','Mardi','Mercredi','Jeudi','Vendredi','Samedi'];
+const MOIS = ['janvier','février','mars','avril','mai','juin','juillet','août','septembre','octobre','novembre','décembre'];
+
+async function appelerTechApp(payload){
+  const res = await fetch(`${SUPABASE_URL}/functions/v1/tech_app`, {
+    method:'POST',
+    headers:{ apikey: SUPABASE_ANON_KEY, Authorization:`Bearer ${SUPABASE_ANON_KEY}`, 'Content-Type':'application/json' },
+    body: JSON.stringify(payload)
+  });
+  const data = await res.json();
+  if(!res.ok) throw new Error(data.erreur || 'Erreur serveur');
+  return data;
+}
+
+function showToast(msg){
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'), 2200);
+}
+
+function toISODate(d){
+  return d.toISOString ? new Date(d.getTime() - d.getTimezoneOffset()*60000).toISOString().slice(0,10) : d;
+}
+
+/* ============================================================
+   Sélection du technicien — une seule fois, persistée localement
+   ============================================================ */
+let techId = localStorage.getItem('af_tech_id');
+let techNom = localStorage.getItem('af_tech_nom');
+
+async function initTechPicker(forcer){
+  if(techId && techNom && !forcer){
+    document.getElementById('techPicker').style.display = 'none';
+    document.getElementById('techNomActuel').textContent = techNom;
+    return;
+  }
+  const picker = document.getElementById('techPicker');
+  picker.style.display = 'flex';
+  const btnsDiv = document.getElementById('techBtns');
+  btnsDiv.innerHTML = '<p style="color:var(--ink-soft)">Chargement…</p>';
+  try{
+    const data = await appelerTechApp({ action:'techs_liste' });
+    btnsDiv.innerHTML = (data.techs||[]).map(t=>
+      `<button class="tech-btn" data-id="${t.id}" data-nom="${t.nom}">${t.nom}</button>`
+    ).join('');
+    btnsDiv.querySelectorAll('.tech-btn').forEach(b=>{
+      b.addEventListener('click', ()=>{
+        techId = b.dataset.id; techNom = b.dataset.nom;
+        localStorage.setItem('af_tech_id', techId);
+        localStorage.setItem('af_tech_nom', techNom);
+        picker.style.display = 'none';
+        document.getElementById('techNomActuel').textContent = techNom;
+        chargerJournee();
+      });
+    });
+  }catch(err){
+    btnsDiv.innerHTML = `<p style="color:var(--red)">Impossible de charger la liste des techniciens (${err.message}).</p>`;
+  }
+}
+document.getElementById('btnChangerTech').addEventListener('click', ()=> initTechPicker(true));
+
+/* ============================================================
+   Navigation par date + chargement de la journée (les 2 vans)
+   ============================================================ */
+let dateCourante = new Date();
+dateCourante.setHours(0,0,0,0);
+
+function renderDateLbl(){
+  const iso = toISODate(dateCourante);
+  const estAujourdhui = iso === toISODate(new Date());
+  document.getElementById('dateLbl').innerHTML =
+    `${JOURS[dateCourante.getDay()]} ${dateCourante.getDate()} ${MOIS[dateCourante.getMonth()]}` +
+    (estAujourdhui ? '<small>Aujourd\'hui</small>' : '');
+}
+
+document.getElementById('btnPrev').addEventListener('click', ()=>{
+  dateCourante.setDate(dateCourante.getDate()-1); renderDateLbl(); chargerJournee();
+});
+document.getElementById('btnNext').addEventListener('click', ()=>{
+  dateCourante.setDate(dateCourante.getDate()+1); renderDateLbl(); chargerJournee();
+});
+document.getElementById('btnAujourdhui').addEventListener('click', ()=>{
+  dateCourante = new Date(); dateCourante.setHours(0,0,0,0); renderDateLbl(); chargerJournee();
+});
+
+function statutInfo(statut){
+  const map = {
+    'confirmé':   { classe:'st-attente', texte:'À venir' },
+    'en_route':   { classe:'st-route',   texte:'En route' },
+    'arrivé':     { classe:'st-arrive',  texte:'Arrivé' },
+    'travail_commencé': { classe:'st-cours', texte:'En cours' },
+    'pause':      { classe:'st-cours',   texte:'Pause' },
+    'terminé':    { classe:'st-termine', texte:'Terminé' },
+    'payé':       { classe:'st-termine', texte:'Payé' },
+    'problème':   { classe:'st-probleme',texte:'Problème' },
+  };
+  return map[statut] || { classe:'st-attente', texte: statut||'' };
+}
+
+function jobCardHtml(j){
+  const si = statutInfo(j.statut);
+  const dejaArrive = !!j.arrivee_ts;
+  const dejaParti = !!j.depart_ts;
+  let actions = '';
+  if(!dejaArrive){
+    actions += `<button class="btn-action" data-action="arrivee" data-job="${j.id}">📍 Arrivé</button>`;
+  } else if(!dejaParti){
+    actions += `<button class="btn-action" data-action="depart" data-job="${j.id}">🏁 Parti</button>`;
+  } else {
+    actions += `<button class="btn-action secondary" data-action="rapport" data-job="${j.id}">📋 Voir le rapport</button>`;
+  }
+  actions += `<button class="btn-action photo" data-action="photo" data-job="${j.id}">📷 Photo</button>`;
+
+  return `<div class="job-card" data-jobcard="${j.id}">
+    <div class="heure">${j.heure_debut} – ${j.heure_fin}</div>
+    <div class="client">${j.client_nom}</div>
+    <div class="adresse">${j.adresse||''}</div>
+    <div class="services">${(j.services||[]).join(', ')}</div>
+    <div><span class="badge-statut ${si.classe}">${si.texte}</span></div>
+    <div class="job-actions">${actions}</div>
+    <div class="nb-photos" data-nbphotos="${j.id}">${j.nb_photos>0 ? `📷 ${j.nb_photos} photo(s)` : ''}</div>
+  </div>`;
+}
+
+let jobsCourants = [];
+let vansCourants = [];
+
+async function chargerJournee(){
+  const grid = document.getElementById('vansGrid');
+  grid.innerHTML = '<p class="empty-note">Chargement des jobs…</p>';
+  try{
+    const data = await appelerTechApp({ action:'jobs_jour', date: toISODate(dateCourante) });
+    vansCourants = data.vans || [];
+    jobsCourants = data.jobs || [];
+    renderVansGrid();
+  }catch(err){
+    grid.innerHTML = `<p class="empty-note">Impossible de charger la journée (${err.message}).</p>`;
+  }
+}
+
+function renderVansGrid(){
+  const grid = document.getElementById('vansGrid');
+  if(!vansCourants.length){
+    grid.innerHTML = '<p class="empty-note">Aucune van configurée.</p>';
+    return;
+  }
+  grid.innerHTML = vansCourants.map(v=>{
+    const jobsVan = jobsCourants.filter(j=>j.van_id===v.id);
+    const contenu = jobsVan.length
+      ? jobsVan.map(jobCardHtml).join('')
+      : '<p class="empty-note">Aucun job cette journée.</p>';
+    return `<div class="van-col"><h3>${v.nom}</h3>${contenu}</div>`;
+  }).join('');
+  attacherActionsJobs();
+}
+
+function attacherActionsJobs(){
+  document.querySelectorAll('.btn-action[data-action="arrivee"]').forEach(b=>{
+    b.addEventListener('click', ()=>marquerEvenement(b.dataset.job, 'arrivee'));
+  });
+  document.querySelectorAll('.btn-action[data-action="depart"]').forEach(b=>{
+    b.addEventListener('click', ()=>marquerEvenement(b.dataset.job, 'depart'));
+  });
+  document.querySelectorAll('.btn-action[data-action="rapport"]').forEach(b=>{
+    b.addEventListener('click', ()=>ouvrirRapport(b.dataset.job));
+  });
+  document.querySelectorAll('.btn-action[data-action="photo"]').forEach(b=>{
+    b.addEventListener('click', ()=>declencherUploadPhoto(b.dataset.job));
+  });
+}
+
+async function marquerEvenement(jobId, type){
+  try{
+    await appelerTechApp({ action:'evenement', job_id: jobId, tech_id: techId, type });
+    showToast(type==='arrivee' ? 'Arrivée enregistrée' : 'Départ enregistré');
+    await chargerJournee();
+    // Rapport automatique dès que le job est marqué "parti".
+    if(type === 'depart') ouvrirRapport(jobId);
+  }catch(err){
+    showToast(`Erreur: ${err.message}`);
+  }
+}
+
+/* ============================================================
+   Photos
+   ============================================================ */
+let jobPourUpload = null;
+const inputPhoto = document.createElement('input');
+inputPhoto.type = 'file';
+inputPhoto.accept = 'image/*';
+inputPhoto.capture = 'environment';
+inputPhoto.multiple = true;
+document.body.appendChild(inputPhoto);
+
+function declencherUploadPhoto(jobId){
+  jobPourUpload = jobId;
+  inputPhoto.value = '';
+  inputPhoto.click();
+}
+
+inputPhoto.addEventListener('change', async ()=>{
+  const fichiers = [...inputPhoto.files];
+  if(!fichiers.length || !jobPourUpload) return;
+  showToast(`Envoi de ${fichiers.length} photo(s)…`);
+  let ok = 0;
+  for(const f of fichiers){
+    try{
+      const base64 = await new Promise((resolve,reject)=>{
+        const reader = new FileReader();
+        reader.onload = ()=>resolve(reader.result);
+        reader.onerror = reject;
+        reader.readAsDataURL(f);
+      });
+      await appelerTechApp({
+        action:'photo_upload', job_id: jobPourUpload, tech_id: techId,
+        image_base64: base64, filename: f.name
+      });
+      ok++;
+    }catch(err){
+      console.error(err);
+    }
+  }
+  showToast(`${ok}/${fichiers.length} photo(s) envoyée(s)`);
+  await chargerJournee();
+});
+
+/* ============================================================
+   Rapport automatique
+   ============================================================ */
+function fmtHeure(ts){
+  if(!ts) return '—';
+  return new Date(ts).toLocaleTimeString('fr-CA', { hour:'2-digit', minute:'2-digit' });
+}
+function fmtDuree(debut, fin){
+  if(!debut || !fin) return '—';
+  const min = Math.round((new Date(fin) - new Date(debut))/60000);
+  const h = Math.floor(min/60), m = min%60;
+  return h>0 ? `${h} h ${m} min` : `${m} min`;
+}
+
+async function ouvrirRapport(jobId){
+  const bg = document.getElementById('modalRapportBg');
+  const modal = document.getElementById('modalRapport');
+  bg.style.display = 'flex';
+  modal.innerHTML = '<p class="empty-note">Chargement du rapport…</p>';
+  try{
+    const data = await appelerTechApp({ action:'rapport', job_id: jobId });
+    const j = data.job, c = data.client || {};
+    modal.innerHTML = `
+      <button class="modal-close" id="btnFermerRapport">×</button>
+      <h2>Rapport de job</h2>
+      <div class="sub">${data.van_nom||''} · ${j.date}</div>
+      <div class="rapport-row"><span>Client</span><span>${c.nom||''}</span></div>
+      <div class="rapport-row"><span>Adresse</span><span>${j.adresse||c.adresse||''}</span></div>
+      <div class="rapport-row"><span>Téléphone</span><span>${c.telephone||'—'}</span></div>
+      <div class="rapport-row"><span>Services</span><span>${(data.services||[]).join(', ')}</span></div>
+      <div class="rapport-row"><span>Heure prévue</span><span>${j.heure_debut} – ${j.heure_fin}</span></div>
+      <div class="rapport-row"><span>Arrivée réelle</span><span>${fmtHeure(data.arrivee_ts)}</span></div>
+      <div class="rapport-row"><span>Départ réel</span><span>${fmtHeure(data.depart_ts)}</span></div>
+      <div class="rapport-row"><span>Durée réelle</span><span>${fmtDuree(data.arrivee_ts, data.depart_ts)}</span></div>
+      ${j.notes ? `<div class="rapport-row"><span>Notes</span><span>${j.notes}</span></div>` : ''}
+      ${(data.photos||[]).length ? `<div class="rapport-photos">${data.photos.map(p=>`<img src="${p.url}">`).join('')}</div>` : '<p class="empty-note">Aucune photo pour ce job.</p>'}
+      <div class="modal-btns">
+        <button class="btn-fermer" id="btnFermerRapport2">Fermer</button>
+        <button class="btn-print" onclick="window.print()">Imprimer / PDF</button>
+      </div>
+    `;
+    document.getElementById('btnFermerRapport').addEventListener('click', fermerRapport);
+    document.getElementById('btnFermerRapport2').addEventListener('click', fermerRapport);
+  }catch(err){
+    modal.innerHTML = `<p class="empty-note">Impossible de charger le rapport (${err.message}).</p>
+      <div class="modal-btns"><button class="btn-fermer" onclick="document.getElementById('modalRapportBg').style.display='none'">Fermer</button></div>`;
+  }
+}
+function fermerRapport(){
+  document.getElementById('modalRapportBg').style.display = 'none';
+}
+
+/* ============================================================
+   Démarrage
+   ============================================================ */
+renderDateLbl();
+initTechPicker(false);
+if(techId) chargerJournee();
+</script>
+</body>
+</html>
