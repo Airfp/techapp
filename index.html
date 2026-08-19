@@ -60,7 +60,7 @@
   .st-termine{background:var(--green-tint); color:var(--green);}
   .st-probleme{background:var(--red-tint); color:var(--red);}
   .job-actions{display:flex; gap:8px; flex-wrap:wrap;}
-  .btn-action{flex:1; min-width:100px; padding:10px 8px; border-radius:9px; border:1.5px solid var(--teal); background:var(--teal); color:#fff; font-family:var(--font-body); font-size:13px; font-weight:600; cursor:pointer; text-align:center;}
+  .btn-action{flex:1; min-width:100px; padding:10px 8px; border-radius:9px; border:1.5px solid var(--teal); background:var(--teal); color:#fff; font-family:var(--font-body); font-size:13px; font-weight:600; cursor:pointer; text-align:center; text-decoration:none; display:inline-block; box-sizing:border-box;}
   .btn-action.secondary{background:var(--surface); color:var(--teal-dark);}
   .btn-action.photo{background:var(--surface); border-color:var(--line); color:var(--ink-soft);}
   .btn-action:active{opacity:.75;}
@@ -230,6 +230,13 @@ function statutInfo(statut){
   return map[statut] || { classe:'st-attente', texte: statut||'' };
 }
 
+function urlGoogleMaps(j){
+  // Coordonnées précises si on les a (géocodées à la réservation), sinon
+  // on laisse Google Maps résoudre l'adresse texte.
+  const query = (j.lat!=null && j.lng!=null) ? `${j.lat},${j.lng}` : (j.adresse||'');
+  return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(query)}`;
+}
+
 function jobCardHtml(j){
   const si = statutInfo(j.statut);
   const dejaArrive = !!j.arrivee_ts;
@@ -241,6 +248,9 @@ function jobCardHtml(j){
     actions += `<button class="btn-action" data-action="depart" data-job="${j.id}">🏁 Parti</button>`;
   } else {
     actions += `<button class="btn-action secondary" data-action="rapport" data-job="${j.id}">📋 Voir le rapport</button>`;
+  }
+  if(j.adresse || (j.lat!=null && j.lng!=null)){
+    actions += `<a class="btn-action secondary" href="${urlGoogleMaps(j)}" target="_blank" rel="noopener">🗺️ Carte</a>`;
   }
   actions += `<button class="btn-action photo" data-action="photo" data-job="${j.id}">📷 Photo</button>`;
 
@@ -384,7 +394,7 @@ async function ouvrirRapport(jobId){
       <h2>Rapport de job</h2>
       <div class="sub">${data.van_nom||''} · ${j.date}</div>
       <div class="rapport-row"><span>Client</span><span>${c.nom||''}</span></div>
-      <div class="rapport-row"><span>Adresse</span><span>${j.adresse||c.adresse||''}</span></div>
+      <div class="rapport-row"><span>Adresse</span><span>${j.adresse||c.adresse||''} ${(j.adresse||c.adresse||j.lat!=null) ? `<a href="${urlGoogleMaps({adresse:j.adresse||c.adresse, lat:j.lat, lng:j.lng})}" target="_blank" rel="noopener" style="color:var(--teal);">🗺️</a>` : ''}</span></div>
       <div class="rapport-row"><span>Téléphone</span><span>${c.telephone||'—'}</span></div>
       <div class="rapport-row"><span>Services</span><span>${(data.services||[]).join(', ')}</span></div>
       <div class="rapport-row"><span>Heure prévue</span><span>${j.heure_debut} – ${j.heure_fin}</span></div>
