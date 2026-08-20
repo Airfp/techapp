@@ -63,8 +63,31 @@
   .btn-action{flex:1; min-width:100px; padding:10px 8px; border-radius:9px; border:1.5px solid var(--teal); background:var(--teal); color:#fff; font-family:var(--font-body); font-size:13px; font-weight:600; cursor:pointer; text-align:center; text-decoration:none; display:inline-block; box-sizing:border-box;}
   .btn-action.secondary{background:var(--surface); color:var(--teal-dark);}
   .btn-action.photo{background:var(--surface); border-color:var(--line); color:var(--ink-soft);}
+  .btn-action.annuler{background:var(--surface); border-color:var(--red); color:var(--red);}
   .btn-action:active{opacity:.75;}
   .nb-photos{font-size:11px; color:var(--ink-soft); margin-top:6px;}
+
+  /* ---- bascule Jour / Mois ---- */
+  .vue-toggle{display:flex; justify-content:center; gap:8px; margin-bottom:16px;}
+  .toggle-btn{background:var(--surface); border:1.5px solid var(--line); border-radius:10px; padding:9px 22px; font-family:var(--font-body); font-size:13.5px; font-weight:600; color:var(--ink-soft); cursor:pointer;}
+  .toggle-btn.active{background:var(--teal); border-color:var(--teal); color:#fff;}
+
+  /* ---- calendrier mensuel ---- */
+  .month-nav{display:flex; align-items:center; justify-content:center; gap:14px; margin-bottom:16px;}
+  .month-nav button{background:var(--surface); border:1.5px solid var(--line); border-radius:10px; width:38px; height:38px; font-size:16px; cursor:pointer; color:var(--teal-dark);}
+  .month-nav button:hover{border-color:var(--teal);}
+  .month-nav .lbl{font-family:var(--font-mono); font-size:14px; text-align:center; min-width:150px; text-transform:capitalize;}
+  .month-grid{display:grid; grid-template-columns:repeat(7,1fr); gap:6px;}
+  .jour-sem{font-size:11px; text-align:center; color:var(--ink-soft); font-family:var(--font-mono); padding-bottom:4px;}
+  .month-cell{aspect-ratio:1; border:1.5px solid var(--line); border-radius:10px; background:var(--surface); display:flex; flex-direction:column; align-items:center; justify-content:center; cursor:pointer; position:relative; font-size:13px;}
+  .month-cell:hover{border-color:var(--teal);}
+  .month-cell.vide{border:none; background:none; cursor:default;}
+  .month-cell.aujourdhui{border-color:var(--teal); border-width:2px;}
+  .month-cell .num{font-weight:600;}
+  .month-cell .badge{position:absolute; top:3px; right:3px; background:var(--teal); color:#fff; font-size:10px; font-weight:700; border-radius:999px; min-width:16px; height:16px; display:flex; align-items:center; justify-content:center; padding:0 3px;}
+
+  .notes-lues{background:var(--bg); border-radius:10px; padding:12px; font-size:13.5px; white-space:pre-wrap; margin-bottom:14px; max-height:200px; overflow-y:auto;}
+  .notes-lues textarea{width:100%; margin-top:6px; padding:10px; border:1.5px solid var(--line); border-radius:9px; font-family:var(--font-body); font-size:14px; box-sizing:border-box;}
 
   /* ---- modal rapport ---- */
   .modal-bg{position:fixed; inset:0; background:rgba(20,32,30,.55); z-index:200; display:flex; align-items:flex-end; justify-content:center;}
@@ -109,20 +132,42 @@
     <div class="qui">👤 <strong id="techNomActuel"></strong><button id="btnChangerTech">changer</button></div>
   </header>
 
-  <div class="date-nav">
-    <button id="btnPrev">‹</button>
-    <div class="lbl" id="dateLbl"></div>
-    <button id="btnNext">›</button>
+  <div class="vue-toggle">
+    <button class="toggle-btn active" id="btnVueJour">Jour</button>
+    <button class="toggle-btn" id="btnVueMois">Mois</button>
   </div>
-  <div class="today-link"><a id="btnAujourdhui">Revenir à aujourd'hui</a></div>
 
-  <div class="vans-grid" id="vansGrid">
-    <p class="empty-note">Chargement…</p>
+  <div id="vueJour">
+    <div class="date-nav">
+      <button id="btnPrev">‹</button>
+      <div class="lbl" id="dateLbl"></div>
+      <button id="btnNext">›</button>
+    </div>
+    <div class="today-link"><a id="btnAujourdhui">Revenir à aujourd'hui</a></div>
+
+    <div class="vans-grid" id="vansGrid">
+      <p class="empty-note">Chargement…</p>
+    </div>
+  </div>
+
+  <div id="vueMois" style="display:none;">
+    <div class="month-nav">
+      <button id="btnMoisPrev">‹</button>
+      <div class="lbl" id="moisLbl"></div>
+      <button id="btnMoisNext">›</button>
+    </div>
+    <div class="month-grid" id="monthGrid">
+      <p class="empty-note">Chargement…</p>
+    </div>
   </div>
 </div>
 
 <div id="modalRapportBg" class="modal-bg" style="display:none;">
   <div class="modal" id="modalRapport"></div>
+</div>
+
+<div id="modalNotesBg" class="modal-bg" style="display:none;">
+  <div class="modal" id="modalNotes"></div>
 </div>
 
 <div class="toast" id="toast"></div>
@@ -198,6 +243,81 @@ document.getElementById('btnChangerTech').addEventListener('click', ()=> initTec
 let dateCourante = new Date();
 dateCourante.setHours(0,0,0,0);
 
+/* ============================================================
+   Bascule Jour / Mois
+   ============================================================ */
+let vueCourante = 'jour';
+let moisCourant = new Date(dateCourante.getFullYear(), dateCourante.getMonth(), 1);
+
+function toggleVue(v){
+  vueCourante = v;
+  document.getElementById('btnVueJour').classList.toggle('active', v==='jour');
+  document.getElementById('btnVueMois').classList.toggle('active', v==='mois');
+  document.getElementById('vueJour').style.display = v==='jour' ? '' : 'none';
+  document.getElementById('vueMois').style.display = v==='mois' ? '' : 'none';
+  if(v==='mois'){
+    moisCourant = new Date(dateCourante.getFullYear(), dateCourante.getMonth(), 1);
+    chargerMois();
+  }
+}
+document.getElementById('btnVueJour').addEventListener('click', ()=>toggleVue('jour'));
+document.getElementById('btnVueMois').addEventListener('click', ()=>toggleVue('mois'));
+
+document.getElementById('btnMoisPrev').addEventListener('click', ()=>{
+  moisCourant.setMonth(moisCourant.getMonth()-1); chargerMois();
+});
+document.getElementById('btnMoisNext').addEventListener('click', ()=>{
+  moisCourant.setMonth(moisCourant.getMonth()+1); chargerMois();
+});
+
+function moisISO(d){
+  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`;
+}
+
+async function chargerMois(){
+  document.getElementById('moisLbl').textContent = `${MOIS[moisCourant.getMonth()]} ${moisCourant.getFullYear()}`;
+  const grid = document.getElementById('monthGrid');
+  grid.innerHTML = '<p class="empty-note">Chargement…</p>';
+  try{
+    const data = await appelerTechApp({ action:'jobs_mois', mois: moisISO(moisCourant) });
+    renderMonthGrid(data.comptes || {});
+  }catch(err){
+    grid.innerHTML = `<p class="empty-note">Impossible de charger le mois (${err.message}).</p>`;
+  }
+}
+
+function renderMonthGrid(comptes){
+  const grid = document.getElementById('monthGrid');
+  const annee = moisCourant.getFullYear(), mois = moisCourant.getMonth();
+  const premierJour = new Date(annee, mois, 1);
+  const nbJours = new Date(annee, mois+1, 0).getDate();
+  let decalage = premierJour.getDay() - 1; // grille commence le lundi
+  if(decalage < 0) decalage = 6;
+  const ajd = toISODate(new Date());
+
+  let html = ['Lun','Mar','Mer','Jeu','Ven','Sam','Dim'].map(j=>`<div class="jour-sem">${j}</div>`).join('');
+  for(let i=0;i<decalage;i++) html += '<div class="month-cell vide"></div>';
+  for(let jour=1; jour<=nbJours; jour++){
+    const iso = `${annee}-${String(mois+1).padStart(2,'0')}-${String(jour).padStart(2,'0')}`;
+    const n = comptes[iso] || 0;
+    const estAjd = iso === ajd;
+    html += `<div class="month-cell${estAjd?' aujourdhui':''}" data-date="${iso}">
+      <div class="num">${jour}</div>
+      ${n>0 ? `<div class="badge">${n}</div>` : ''}
+    </div>`;
+  }
+  grid.innerHTML = html;
+  grid.querySelectorAll('.month-cell[data-date]').forEach(c=>{
+    c.addEventListener('click', ()=>{
+      const [an,mo,jr] = c.dataset.date.split('-').map(Number);
+      dateCourante = new Date(an, mo-1, jr);
+      renderDateLbl();
+      toggleVue('jour');
+      chargerJournee();
+    });
+  });
+}
+
 function renderDateLbl(){
   const iso = toISODate(dateCourante);
   const estAujourdhui = iso === toISODate(new Date());
@@ -253,6 +373,8 @@ function jobCardHtml(j){
     actions += `<a class="btn-action secondary" href="${urlGoogleMaps(j)}" target="_blank" rel="noopener">🗺️ Carte</a>`;
   }
   actions += `<button class="btn-action photo" data-action="photo" data-job="${j.id}">📷 Photo</button>`;
+  actions += `<button class="btn-action secondary" data-action="notes" data-job="${j.id}">📝 Notes</button>`;
+  actions += `<button class="btn-action annuler" data-action="annuler" data-job="${j.id}">❌ Annuler</button>`;
 
   return `<div class="job-card" data-jobcard="${j.id}">
     <div class="heure">${j.heure_debut} – ${j.heure_fin}</div>
@@ -310,6 +432,70 @@ function attacherActionsJobs(){
   document.querySelectorAll('.btn-action[data-action="photo"]').forEach(b=>{
     b.addEventListener('click', ()=>declencherUploadPhoto(b.dataset.job));
   });
+  document.querySelectorAll('.btn-action[data-action="notes"]').forEach(b=>{
+    b.addEventListener('click', ()=>ouvrirNotes(b.dataset.job));
+  });
+  document.querySelectorAll('.btn-action[data-action="annuler"]').forEach(b=>{
+    b.addEventListener('click', ()=>confirmerAnnulation(b.dataset.job));
+  });
+}
+
+/* ============================================================
+   Notes (lecture + ajout)
+   ============================================================ */
+function ouvrirNotes(jobId){
+  const job = jobsCourants.find(j=>j.id===jobId);
+  if(!job) return;
+  const bg = document.getElementById('modalNotesBg');
+  const modal = document.getElementById('modalNotes');
+  modal.innerHTML = `
+    <button class="modal-close" id="btnFermerNotes">×</button>
+    <h2>Notes</h2>
+    <div class="sub">${job.client_nom} · ${job.heure_debut}</div>
+    <div class="notes-lues">${job.notes ? job.notes.replace(/</g,'&lt;') : '<span style="color:var(--ink-soft); font-style:italic;">Aucune note pour ce moment.</span>'}</div>
+    <label style="font-size:12.5px; color:var(--ink-soft);">Ajouter une note</label>
+    <textarea id="inpNouvelleNote" rows="3" placeholder="ex: chien dans la cour, client a rappelé pour..."></textarea>
+    <div class="modal-btns">
+      <button class="btn-fermer" id="btnFermerNotes2">Fermer</button>
+      <button class="btn-print" id="btnEnregistrerNote">Enregistrer la note</button>
+    </div>
+  `;
+  bg.style.display = 'flex';
+  document.getElementById('btnFermerNotes').addEventListener('click', fermerNotes);
+  document.getElementById('btnFermerNotes2').addEventListener('click', fermerNotes);
+  document.getElementById('btnEnregistrerNote').addEventListener('click', ()=>enregistrerNote(jobId));
+}
+function fermerNotes(){
+  document.getElementById('modalNotesBg').style.display = 'none';
+}
+async function enregistrerNote(jobId){
+  const zone = document.getElementById('inpNouvelleNote');
+  const texte = zone.value.trim();
+  if(!texte) return;
+  try{
+    await appelerTechApp({ action:'ajouter_note', job_id: jobId, tech_id: techId, note: texte });
+    showToast('Note enregistrée');
+    fermerNotes();
+    await chargerJournee();
+  }catch(err){
+    showToast(`Erreur: ${err.message}`);
+  }
+}
+
+/* ============================================================
+   Annulation d'un rendez-vous
+   ============================================================ */
+async function confirmerAnnulation(jobId){
+  const job = jobsCourants.find(j=>j.id===jobId);
+  const nomClient = job ? job.client_nom : 'ce rendez-vous';
+  if(!confirm(`Annuler le rendez-vous de ${nomClient}? Cette action est irréversible.`)) return;
+  try{
+    await appelerTechApp({ action:'annuler', job_id: jobId, tech_id: techId });
+    showToast('Rendez-vous annulé');
+    await chargerJournee();
+  }catch(err){
+    showToast(`Erreur: ${err.message}`);
+  }
 }
 
 async function marquerEvenement(jobId, type){
@@ -331,7 +517,8 @@ let jobPourUpload = null;
 const inputPhoto = document.createElement('input');
 inputPhoto.type = 'file';
 inputPhoto.accept = 'image/*';
-inputPhoto.capture = 'environment';
+// Pas d'attribut "capture" — le téléphone propose alors le choix entre
+// prendre une photo ET piger dans la galerie, plutôt que forcer la caméra.
 inputPhoto.multiple = true;
 document.body.appendChild(inputPhoto);
 
