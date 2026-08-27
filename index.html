@@ -7,192 +7,208 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
 <style>
-  :root{
-    --bg:#F5F7F6; --surface:#FFFFFF; --ink:#14201E; --ink-soft:#55645F;
-    --line:#DDE4E1; --teal:#0C8479; --teal-dark:#095F58; --teal-tint:#E3F3F1;
-    --green:#4C8C4A; --green-tint:#EAF3E9; --amber:#B8791A; --amber-tint:#FBF0DE;
-    --red:#C24B3F; --red-tint:#FBEAE7; --radius:14px;
-    --font-display:'Fraunces', serif; --font-body:'Inter', system-ui, sans-serif; --font-mono:'IBM Plex Mono', monospace;
-  }
-  *{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
-  body{margin:0; background:var(--bg); color:var(--ink); font-family:var(--font-body); -webkit-font-smoothing:antialiased;}
-  h1,h2,h3{font-family:var(--font-display); font-weight:600; margin:0;}
-  .wrap{max-width:900px; margin:0 auto; padding:16px 14px 60px;}
+:root{
+--bg:#F5F7F6; --surface:#FFFFFF; --ink:#14201E; --ink-soft:#55645F;
+--line:#DDE4E1; --teal:#0C8479; --teal-dark:#095F58; --teal-tint:#E3F3F1;
+--green:#4C8C4A; --green-tint:#EAF3E9; --amber:#B8791A; --amber-tint:#FBF0DE;
+--red:#C24B3F; --red-tint:#FBEAE7; --radius:14px;
+--font-display:'Fraunces', serif; --font-body:'Inter', system-ui, sans-serif; --font-mono:'IBM Plex Mono', monospace;
+}
+*{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
+body{margin:0; background:var(--bg); color:var(--ink); font-family:var(--font-body); -webkit-font-smoothing:antialiased;}
+h1,h2,h3{font-family:var(--font-display); font-weight:600; margin:0;}
+.wrap{max-width:900px; margin:0 auto; padding:16px 14px 60px;}
 
-  /* ---- sélecteur de technicien (plein écran, 1ère ouverture seulement) ---- */
-  #techPicker{position:fixed; inset:0; background:var(--bg); z-index:100; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:24px;}
-  #techPicker h2{font-size:22px; margin-bottom:6px; text-align:center;}
-  #techPicker p{color:var(--ink-soft); font-size:14px; margin:0 0 24px; text-align:center;}
-  .tech-btn{width:100%; max-width:320px; padding:18px; margin-bottom:12px; border-radius:var(--radius); border:1.5px solid var(--line); background:var(--surface); font-family:var(--font-body); font-size:17px; font-weight:600; color:var(--ink); cursor:pointer; transition:all .15s;}
-  .tech-btn:hover{border-color:var(--teal); background:var(--teal-tint); color:var(--teal-dark);}
+/* ---- sélecteur de technicien (plein écran, 1ère ouverture seulement) ---- */
+#techPicker{position:fixed; inset:0; background:var(--bg); z-index:100; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:24px;}
+#techPicker h2{font-size:22px; margin-bottom:6px; text-align:center;}
+#techPicker p{color:var(--ink-soft); font-size:14px; margin:0 0 24px; text-align:center;}
+.tech-btn{width:100%; max-width:320px; padding:18px; margin-bottom:12px; border-radius:var(--radius); border:1.5px solid var(--line); background:var(--surface); font-family:var(--font-body); font-size:17px; font-weight:600; color:var(--ink); cursor:pointer; transition:all .15s;}
+.tech-btn:hover{border-color:var(--teal); background:var(--teal-tint); color:var(--teal-dark);}
 
-  /* ---- header ---- */
-  header.top{display:flex; align-items:center; justify-content:space-between; padding:8px 2px 16px; flex-wrap:wrap; gap:10px;}
-  .brand{font-family:var(--font-display); font-size:18px; font-weight:600; color:var(--teal-dark);}
-  .qui{font-size:12.5px; color:var(--ink-soft);}
-  .qui button{background:none; border:none; color:var(--teal); font-family:var(--font-body); font-size:12.5px; text-decoration:underline; cursor:pointer; padding:0; margin-left:6px;}
+/* ---- header ---- */
+header.top{display:flex; align-items:center; justify-content:space-between; padding:8px 2px 16px; flex-wrap:wrap; gap:10px;}
+.brand{font-family:var(--font-display); font-size:18px; font-weight:600; color:var(--teal-dark);}
+.qui{font-size:12.5px; color:var(--ink-soft);}
+.qui button{background:none; border:none; color:var(--teal); font-family:var(--font-body); font-size:12.5px; text-decoration:underline; cursor:pointer; padding:0; margin-left:6px;}
 
-  .date-nav{display:flex; align-items:center; justify-content:center; gap:14px; margin-bottom:18px;}
-  .date-nav button{background:var(--surface); border:1.5px solid var(--line); border-radius:10px; width:38px; height:38px; font-size:16px; cursor:pointer; color:var(--teal-dark);}
-  .date-nav button:hover{border-color:var(--teal);}
-  .date-nav .lbl{font-family:var(--font-mono); font-size:14px; text-align:center; min-width:170px;}
-  .date-nav .lbl small{display:block; color:var(--ink-soft); font-size:11px; font-weight:normal;}
-  .today-link{display:block; text-align:center; margin:-10px 0 18px; font-size:12.5px;}
-  .today-link a{color:var(--teal); cursor:pointer; text-decoration:underline;}
+.date-nav{display:flex; align-items:center; justify-content:center; gap:14px; margin-bottom:18px;}
+.date-nav button{background:var(--surface); border:1.5px solid var(--line); border-radius:10px; width:38px; height:38px; font-size:16px; cursor:pointer; color:var(--teal-dark);}
+.date-nav button:hover{border-color:var(--teal);}
+.date-nav .lbl{font-family:var(--font-mono); font-size:14px; text-align:center; min-width:170px;}
+.date-nav .lbl small{display:block; color:var(--ink-soft); font-size:11px; font-weight:normal;}
+.today-link{display:block; text-align:center; margin:-10px 0 18px; font-size:12.5px;}
+.today-link a{color:var(--teal); cursor:pointer; text-decoration:underline;}
 
-  /* ---- colonnes vans ---- */
-  .vans-grid{display:grid; grid-template-columns:1fr 1fr; gap:16px;}
-  @media(max-width:680px){.vans-grid{grid-template-columns:1fr;}}
-  .van-col h3{font-size:14px; font-family:var(--font-mono); text-transform:uppercase; letter-spacing:.04em; color:var(--teal-dark); margin-bottom:10px; padding-bottom:8px; border-bottom:1.5px solid var(--line);}
-  .empty-note{color:var(--ink-soft); font-size:13.5px; font-style:italic; padding:10px 2px;}
+/* ---- colonnes vans ---- */
+.vans-grid{display:grid; grid-template-columns:1fr 1fr; gap:16px;}
+@media(max-width:680px){.vans-grid{grid-template-columns:1fr;}}
+.van-col h3{font-size:14px; font-family:var(--font-mono); text-transform:uppercase; letter-spacing:.04em; color:var(--teal-dark); margin-bottom:10px; padding-bottom:8px; border-bottom:1.5px solid var(--line);}
+.empty-note{color:var(--ink-soft); font-size:13.5px; font-style:italic; padding:10px 2px;}
 
-  /* ---- carte job ---- */
-  .job-card{background:var(--surface); border:1.5px solid var(--line); border-radius:var(--radius); padding:14px; margin-bottom:12px;}
-  .job-card .heure{font-family:var(--font-mono); font-size:15px; font-weight:600; color:var(--teal-dark);}
-  .job-card .client{font-size:15.5px; font-weight:600; margin:3px 0 2px;}
-  .job-card .adresse{font-size:12.5px; color:var(--ink-soft); margin-bottom:6px;}
-  .job-card .services{font-size:12px; color:var(--ink-soft); margin-bottom:8px;}
-  .badge-statut{display:inline-block; font-size:11px; font-weight:600; padding:3px 9px; border-radius:999px; margin-bottom:10px;}
-  .st-attente{background:var(--line); color:var(--ink-soft);}
-  .st-route{background:var(--teal-tint); color:var(--teal-dark);}
-  .st-arrive{background:var(--amber-tint); color:var(--amber);}
-  .st-cours{background:var(--teal-tint); color:var(--teal-dark);}
-  .st-termine{background:var(--green-tint); color:var(--green);}
-  .st-probleme{background:var(--red-tint); color:var(--red);}
-  .job-actions{display:flex; gap:8px; flex-wrap:wrap;}
-  .btn-action{flex:1; min-width:100px; padding:10px 8px; border-radius:9px; border:1.5px solid var(--teal); background:var(--teal); color:#fff; font-family:var(--font-body); font-size:13px; font-weight:600; cursor:pointer; text-align:center; text-decoration:none; display:inline-block; box-sizing:border-box;}
-  .btn-action.secondary{background:var(--surface); color:var(--teal-dark);}
-  .btn-action.photo{background:var(--surface); border-color:var(--line); color:var(--ink-soft);}
-  .btn-action.annuler{background:var(--surface); border-color:var(--red); color:var(--red);}
-  .btn-action:active{opacity:.75;}
-  .nb-photos{font-size:11px; color:var(--ink-soft); margin-top:6px;}
+/* ---- carte job ---- */
+.job-card{background:var(--surface); border:1.5px solid var(--line); border-radius:var(--radius); padding:14px; margin-bottom:12px;}
+.job-card .heure{font-family:var(--font-mono); font-size:15px; font-weight:600; color:var(--teal-dark); display:flex; align-items:center; gap:6px;}
+.job-card .client{font-size:15.5px; font-weight:600; margin:3px 0 2px;}
+.job-card .adresse{font-size:12.5px; color:var(--ink-soft); margin-bottom:6px;}
+.job-card .services{font-size:12px; color:var(--ink-soft); margin-bottom:8px;}
+.badge-statut{display:inline-block; font-size:11px; font-weight:600; padding:3px 9px; border-radius:999px; margin-bottom:10px;}
+.st-attente{background:var(--line); color:var(--ink-soft);}
+.st-route{background:var(--teal-tint); color:var(--teal-dark);}
+.st-arrive{background:var(--amber-tint); color:var(--amber);}
+.st-cours{background:var(--teal-tint); color:var(--teal-dark);}
+.st-termine{background:var(--green-tint); color:var(--green);}
+.st-probleme{background:var(--red-tint); color:var(--red);}
+.job-actions{display:flex; gap:8px; flex-wrap:wrap;}
+.btn-action{flex:1; min-width:100px; padding:10px 8px; border-radius:9px; border:1.5px solid var(--teal); background:var(--teal); color:#fff; font-family:var(--font-body); font-size:13px; font-weight:600; cursor:pointer; text-align:center; text-decoration:none; display:inline-block; box-sizing:border-box;}
+.btn-action.secondary{background:var(--surface); color:var(--teal-dark);}
+.btn-action.photo{background:var(--surface); border-color:var(--line); color:var(--ink-soft);}
+.btn-action.annuler{background:var(--surface); border-color:var(--red); color:var(--red);}
+.btn-action:active{opacity:.75;}
+.nb-photos{font-size:11px; color:var(--ink-soft); margin-top:6px;}
 
-  /* ---- bascule Jour / Mois ---- */
-  .vue-toggle{display:flex; justify-content:center; gap:8px; margin-bottom:16px;}
-  .toggle-btn{background:var(--surface); border:1.5px solid var(--line); border-radius:10px; padding:9px 22px; font-family:var(--font-body); font-size:13.5px; font-weight:600; color:var(--ink-soft); cursor:pointer;}
-  .toggle-btn.active{background:var(--teal); border-color:var(--teal); color:#fff;}
+/* ---- heure du rdv modifiable + heures réelles corrigeables ---- */
+.btn-heure-edit{background:none; border:none; padding:2px 4px; font-size:13px; cursor:pointer; color:var(--ink-soft); line-height:1;}
+.btn-heure-edit:hover{color:var(--teal-dark);}
+.heures-reelles{display:flex; gap:8px; flex-wrap:wrap; margin:2px 0 8px;}
+.heure-reelle-tag{font-size:11.5px; color:var(--ink-soft); background:var(--bg); border:1px solid var(--line); border-radius:999px; padding:3px 9px; cursor:pointer; display:inline-flex; align-items:center; gap:5px;}
+.heure-reelle-tag:hover{border-color:var(--teal);}
+.heure-reelle-tag .corriger{text-decoration:underline; color:var(--teal);}
 
-  /* ---- calendrier mensuel ---- */
-  .month-nav{display:flex; align-items:center; justify-content:center; gap:14px; margin-bottom:16px;}
-  .month-nav button{background:var(--surface); border:1.5px solid var(--line); border-radius:10px; width:38px; height:38px; font-size:16px; cursor:pointer; color:var(--teal-dark);}
-  .month-nav button:hover{border-color:var(--teal);}
-  .month-nav .lbl{font-family:var(--font-mono); font-size:14px; text-align:center; min-width:150px; text-transform:capitalize;}
-  .month-grid{display:grid; grid-template-columns:repeat(7,1fr); gap:6px;}
-  .jour-sem{font-size:11px; text-align:center; color:var(--ink-soft); font-family:var(--font-mono); padding-bottom:4px;}
-  .month-cell{aspect-ratio:1; border:1.5px solid var(--line); border-radius:10px; background:var(--surface); display:flex; flex-direction:column; align-items:center; justify-content:center; cursor:pointer; position:relative; font-size:13px;}
-  .month-cell:hover{border-color:var(--teal);}
-  .month-cell.vide{border:none; background:none; cursor:default;}
-  .month-cell.aujourdhui{border-color:var(--teal); border-width:2px;}
-  .month-cell .num{font-weight:600;}
-  .month-cell .badge{position:absolute; top:3px; right:3px; background:var(--teal); color:#fff; font-size:10px; font-weight:700; border-radius:999px; min-width:16px; height:16px; display:flex; align-items:center; justify-content:center; padding:0 3px;}
+/* ---- bascule Jour / Mois ---- */
+.vue-toggle{display:flex; justify-content:center; gap:8px; margin-bottom:16px;}
+.toggle-btn{background:var(--surface); border:1.5px solid var(--line); border-radius:10px; padding:9px 22px; font-family:var(--font-body); font-size:13.5px; font-weight:600; color:var(--ink-soft); cursor:pointer;}
+.toggle-btn.active{background:var(--teal); border-color:var(--teal); color:#fff;}
 
-  .notes-lues{background:var(--bg); border-radius:10px; padding:12px; font-size:13.5px; white-space:pre-wrap; margin-bottom:14px; max-height:200px; overflow-y:auto;}
-  .notes-lues textarea{width:100%; margin-top:6px; padding:10px; border:1.5px solid var(--line); border-radius:9px; font-family:var(--font-body); font-size:14px; box-sizing:border-box;}
+/* ---- calendrier mensuel ---- */
+.month-nav{display:flex; align-items:center; justify-content:center; gap:14px; margin-bottom:16px;}
+.month-nav button{background:var(--surface); border:1.5px solid var(--line); border-radius:10px; width:38px; height:38px; font-size:16px; cursor:pointer; color:var(--teal-dark);}
+.month-nav button:hover{border-color:var(--teal);}
+.month-nav .lbl{font-family:var(--font-mono); font-size:14px; text-align:center; min-width:150px; text-transform:capitalize;}
+.month-grid{display:grid; grid-template-columns:repeat(7,1fr); gap:6px;}
+.jour-sem{font-size:11px; text-align:center; color:var(--ink-soft); font-family:var(--font-mono); padding-bottom:4px;}
+.month-cell{aspect-ratio:1; border:1.5px solid var(--line); border-radius:10px; background:var(--surface); display:flex; flex-direction:column; align-items:center; justify-content:center; cursor:pointer; position:relative; font-size:13px;}
+.month-cell:hover{border-color:var(--teal);}
+.month-cell.vide{border:none; background:none; cursor:default;}
+.month-cell.aujourdhui{border-color:var(--teal); border-width:2px;}
+.month-cell .num{font-weight:600;}
+.month-cell .badge{position:absolute; top:3px; right:3px; background:var(--teal); color:#fff; font-size:10px; font-weight:700; border-radius:999px; min-width:16px; height:16px; display:flex; align-items:center; justify-content:center; padding:0 3px;}
 
-  /* ---- rdv sans van assignée ---- */
-  .sans-van-header{font-size:13px; font-weight:600; color:var(--amber); margin:4px 2px 10px;}
-  .job-card.sans-van{border-color:var(--amber);}
-  .prompt-van{background:var(--amber-tint); color:var(--amber); border-radius:9px; padding:8px 10px; font-size:12.5px; margin-bottom:10px; display:flex; align-items:center; gap:8px; flex-wrap:wrap;}
-  .btn-van-choix{background:var(--amber); color:#fff; border:none; border-radius:7px; padding:6px 12px; font-family:var(--font-body); font-size:12px; font-weight:600; cursor:pointer;}
+.notes-lues{background:var(--bg); border-radius:10px; padding:12px; font-size:13.5px; white-space:pre-wrap; margin-bottom:14px; max-height:200px; overflow-y:auto;}
+.notes-lues textarea{width:100%; margin-top:6px; padding:10px; border:1.5px solid var(--line); border-radius:9px; font-family:var(--font-body); font-size:14px; box-sizing:border-box;}
 
-  /* ---- transférer une van déjà assignée ---- */
-  .van-transfert{background:var(--teal-tint); color:var(--teal-dark); border-radius:9px; padding:8px 10px; font-size:12.5px; margin-bottom:10px; display:flex; align-items:center; gap:8px; flex-wrap:wrap;}
-  .btn-van-swap{background:var(--surface); color:var(--teal-dark); border:1.5px solid var(--teal); border-radius:7px; padding:5px 11px; font-family:var(--font-body); font-size:12px; font-weight:600; cursor:pointer;}
+/* ---- rdv sans van assignée ---- */
+.sans-van-header{font-size:13px; font-weight:600; color:var(--amber); margin:4px 2px 10px;}
+.job-card.sans-van{border-color:var(--amber);}
+.prompt-van{background:var(--amber-tint); color:var(--amber); border-radius:9px; padding:8px 10px; font-size:12.5px; margin-bottom:10px; display:flex; align-items:center; gap:8px; flex-wrap:wrap;}
+.btn-van-choix{background:var(--amber); color:#fff; border:none; border-radius:7px; padding:6px 12px; font-family:var(--font-body); font-size:12px; font-weight:600; cursor:pointer;}
 
-  /* ---- bouton + formulaire "nouveau rdv" ---- */
-  .btn-nouveau-rdv{display:block; margin:0 auto 18px; background:var(--surface); border:1.5px dashed var(--teal); border-radius:10px; padding:10px 22px; font-family:var(--font-body); font-size:13.5px; font-weight:600; color:var(--teal-dark); cursor:pointer;}
-  .form-grid{display:grid; grid-template-columns:110px 1fr; gap:10px 12px; align-items:center; margin-bottom:16px;}
-  .form-grid label{font-size:12.5px; color:var(--ink-soft);}
-  .form-grid input, .form-grid select, .form-grid textarea{padding:9px 10px; border:1.5px solid var(--line); border-radius:8px; font-family:var(--font-body); font-size:14px; box-sizing:border-box; width:100%;}
-  .form-grid textarea{resize:vertical;}
+/* ---- transférer une van déjà assignée ---- */
+.van-transfert{background:var(--teal-tint); color:var(--teal-dark); border-radius:9px; padding:8px 10px; font-size:12.5px; margin-bottom:10px; display:flex; align-items:center; gap:8px; flex-wrap:wrap;}
+.btn-van-swap{background:var(--surface); color:var(--teal-dark); border:1.5px solid var(--teal); border-radius:7px; padding:5px 11px; font-family:var(--font-body); font-size:12px; font-weight:600; cursor:pointer;}
 
-  /* ---- modal rapport ---- */
-  .modal-bg{position:fixed; inset:0; background:rgba(20,32,30,.55); z-index:200; display:flex; align-items:flex-end; justify-content:center;}
-  @media(min-width:680px){.modal-bg{align-items:center;}}
-  .modal{background:var(--surface); width:100%; max-width:560px; max-height:92vh; overflow-y:auto; border-radius:18px 18px 0 0; padding:22px 20px 30px;}
-  @media(min-width:680px){.modal{border-radius:18px;}}
-  .modal h2{font-size:20px; margin-bottom:2px;}
-  .modal .sub{color:var(--ink-soft); font-size:13px; margin-bottom:16px;}
-  .modal-close{float:right; background:none; border:none; font-size:20px; cursor:pointer; color:var(--ink-soft);}
-  .rapport-row{display:flex; justify-content:space-between; padding:9px 0; border-bottom:1px solid var(--line); font-size:14px;}
-  .rapport-row span:first-child{color:var(--ink-soft);}
-  .rapport-photos{display:grid; grid-template-columns:1fr 1fr 1fr; gap:8px; margin-top:14px;}
-  .rapport-photos img{width:100%; aspect-ratio:1; object-fit:cover; border-radius:8px; border:1px solid var(--line);}
-  .modal-btns{display:flex; gap:10px; margin-top:20px;}
-  .modal-btns button{flex:1; padding:12px; border-radius:10px; font-family:var(--font-body); font-size:14px; font-weight:600; cursor:pointer;}
-  .btn-print{background:var(--teal); color:#fff; border:1.5px solid var(--teal);}
-  .btn-fermer{background:var(--surface); color:var(--ink); border:1.5px solid var(--line);}
+/* ---- bouton + formulaire "nouveau rdv" ---- */
+.btn-nouveau-rdv{display:block; margin:0 auto 18px; background:var(--surface); border:1.5px dashed var(--teal); border-radius:10px; padding:10px 22px; font-family:var(--font-body); font-size:13.5px; font-weight:600; color:var(--teal-dark); cursor:pointer;}
+.form-grid{display:grid; grid-template-columns:110px 1fr; gap:10px 12px; align-items:center; margin-bottom:16px;}
+.form-grid label{font-size:12.5px; color:var(--ink-soft);}
+.form-grid input, .form-grid select, .form-grid textarea{padding:9px 10px; border:1.5px solid var(--line); border-radius:8px; font-family:var(--font-body); font-size:14px; box-sizing:border-box; width:100%;}
+.form-grid textarea{resize:vertical;}
 
-  input[type=file]{display:none;}
-  .toast{position:fixed; bottom:18px; left:50%; transform:translateX(-50%); background:var(--ink); color:#fff; padding:10px 18px; border-radius:10px; font-size:13px; z-index:300; opacity:0; transition:opacity .25s;}
-  .toast.show{opacity:1;}
+/* ---- modal rapport ---- */
+.modal-bg{position:fixed; inset:0; background:rgba(20,32,30,.55); z-index:200; display:flex; align-items:flex-end; justify-content:center;}
+@media(min-width:680px){.modal-bg{align-items:center;}}
+.modal{background:var(--surface); width:100%; max-width:560px; max-height:92vh; overflow-y:auto; border-radius:18px 18px 0 0; padding:22px 20px 30px;}
+@media(min-width:680px){.modal{border-radius:18px;}}
+.modal h2{font-size:20px; margin-bottom:2px;}
+.modal .sub{color:var(--ink-soft); font-size:13px; margin-bottom:16px;}
+.modal-close{float:right; background:none; border:none; font-size:20px; cursor:pointer; color:var(--ink-soft);}
+.rapport-row{display:flex; justify-content:space-between; padding:9px 0; border-bottom:1px solid var(--line); font-size:14px;}
+.rapport-row span:first-child{color:var(--ink-soft);}
+.rapport-photos{display:grid; grid-template-columns:1fr 1fr 1fr; gap:8px; margin-top:14px;}
+.rapport-photos img{width:100%; aspect-ratio:1; object-fit:cover; border-radius:8px; border:1px solid var(--line);}
+.modal-btns{display:flex; gap:10px; margin-top:20px;}
+.modal-btns button{flex:1; padding:12px; border-radius:10px; font-family:var(--font-body); font-size:14px; font-weight:600; cursor:pointer;}
+.btn-print{background:var(--teal); color:#fff; border:1.5px solid var(--teal);}
+.btn-fermer{background:var(--surface); color:var(--ink); border:1.5px solid var(--line);}
 
-  @media print{
-    body *{visibility:hidden;}
-    #modalRapport, #modalRapport *{visibility:visible;}
-    #modalRapport{position:absolute; inset:0;}
-    .modal-btns, .modal-close{display:none;}
-  }
+input[type=file]{display:none;}
+.toast{position:fixed; bottom:18px; left:50%; transform:translateX(-50%); background:var(--ink); color:#fff; padding:10px 18px; border-radius:10px; font-size:13px; z-index:300; opacity:0; transition:opacity .25s;}
+.toast.show{opacity:1;}
+
+@media print{
+body *{visibility:hidden;}
+#modalRapport, #modalRapport *{visibility:visible;}
+#modalRapport{position:absolute; inset:0;}
+.modal-btns, .modal-close{display:none;}
+}
 </style>
 </head>
 <body>
 
 <div id="techPicker">
-  <h2>Qui utilise l'app?</h2>
-  <p>Choisis ton nom — tu n'auras pas à le refaire à chaque ouverture.</p>
-  <div id="techBtns"></div>
+<h2>Qui utilise l'app?</h2>
+<p>Choisis ton nom — tu n'auras pas à le refaire à chaque ouverture.</p>
+<div id="techBtns"></div>
 </div>
 
 <div class="wrap">
-  <header class="top">
-    <div class="brand">Air-FP · App technicien</div>
-    <div class="qui">👤 <strong id="techNomActuel"></strong><button id="btnChangerTech">changer</button></div>
-  </header>
+<header class="top">
+<div class="brand">Air-FP · App technicien</div>
+<div class="qui">👤 <strong id="techNomActuel"></strong><button id="btnChangerTech">changer</button></div>
+</header>
 
-  <div class="vue-toggle">
-    <button class="toggle-btn active" id="btnVueJour">Jour</button>
-    <button class="toggle-btn" id="btnVueMois">Mois</button>
-  </div>
+<div class="vue-toggle">
+<button class="toggle-btn active" id="btnVueJour">Jour</button>
+<button class="toggle-btn" id="btnVueMois">Mois</button>
+</div>
 
-  <div id="vueJour">
-    <div class="date-nav">
-      <button id="btnPrev">‹</button>
-      <div class="lbl" id="dateLbl"></div>
-      <button id="btnNext">›</button>
-    </div>
-    <div class="today-link"><a id="btnAujourdhui">Revenir à aujourd'hui</a></div>
+<div id="vueJour">
+<div class="date-nav">
+<button id="btnPrev">‹</button>
+<div class="lbl" id="dateLbl"></div>
+<button id="btnNext">›</button>
+</div>
+<div class="today-link"><a id="btnAujourdhui">Revenir à aujourd'hui</a></div>
 
-    <button class="btn-nouveau-rdv" id="btnNouveauRdv">+ Nouveau RDV</button>
+<button class="btn-nouveau-rdv" id="btnNouveauRdv">+ Nouveau RDV</button>
 
-    <div id="sansVanSection"></div>
+<div id="sansVanSection"></div>
 
-    <div class="vans-grid" id="vansGrid">
-      <p class="empty-note">Chargement…</p>
-    </div>
-  </div>
+<div class="vans-grid" id="vansGrid">
+<p class="empty-note">Chargement…</p>
+</div>
+</div>
 
-  <div id="vueMois" style="display:none;">
-    <div class="month-nav">
-      <button id="btnMoisPrev">‹</button>
-      <div class="lbl" id="moisLbl"></div>
-      <button id="btnMoisNext">›</button>
-    </div>
-    <div class="month-grid" id="monthGrid">
-      <p class="empty-note">Chargement…</p>
-    </div>
-  </div>
+<div id="vueMois" style="display:none;">
+<div class="month-nav">
+<button id="btnMoisPrev">‹</button>
+<div class="lbl" id="moisLbl"></div>
+<button id="btnMoisNext">›</button>
+</div>
+<div class="month-grid" id="monthGrid">
+<p class="empty-note">Chargement…</p>
+</div>
+</div>
 </div>
 
 <div id="modalRapportBg" class="modal-bg" style="display:none;">
-  <div class="modal" id="modalRapport"></div>
+<div class="modal" id="modalRapport"></div>
 </div>
 
 <div id="modalNotesBg" class="modal-bg" style="display:none;">
-  <div class="modal" id="modalNotes"></div>
+<div class="modal" id="modalNotes"></div>
 </div>
 
 <div id="modalNouveauBg" class="modal-bg" style="display:none;">
-  <div class="modal" id="modalNouveau"></div>
+<div class="modal" id="modalNouveau"></div>
+</div>
+
+<div id="modalHeureBg" class="modal-bg" style="display:none;">
+<div class="modal" id="modalHeure"></div>
+</div>
+
+<div id="modalHoraireBg" class="modal-bg" style="display:none;">
+<div class="modal" id="modalHoraire"></div>
 </div>
 
 <div class="toast" id="toast"></div>
@@ -204,383 +220,498 @@ const JOURS = ['Dimanche','Lundi','Mardi','Mercredi','Jeudi','Vendredi','Samedi'
 const MOIS = ['janvier','février','mars','avril','mai','juin','juillet','août','septembre','octobre','novembre','décembre'];
 
 async function appelerTechApp(payload){
-  const res = await fetch(`${SUPABASE_URL}/functions/v1/tech_app`, {
-    method:'POST',
-    headers:{ apikey: SUPABASE_ANON_KEY, Authorization:`Bearer ${SUPABASE_ANON_KEY}`, 'Content-Type':'application/json' },
-    body: JSON.stringify(payload)
-  });
-  const data = await res.json();
-  if(!res.ok) throw new Error(data.erreur || 'Erreur serveur');
-  return data;
+const res = await fetch(`${SUPABASE_URL}/functions/v1/tech_app`, {
+method:'POST',
+headers:{ apikey: SUPABASE_ANON_KEY, Authorization:`Bearer ${SUPABASE_ANON_KEY}`, 'Content-Type':'application/json' },
+body: JSON.stringify(payload)
+});
+const data = await res.json();
+if(!res.ok) throw new Error(data.erreur || 'Erreur serveur');
+return data;
 }
 
 function showToast(msg){
-  const t = document.getElementById('toast');
-  t.textContent = msg;
-  t.classList.add('show');
-  setTimeout(()=>t.classList.remove('show'), 2200);
+const t = document.getElementById('toast');
+t.textContent = msg;
+t.classList.add('show');
+setTimeout(()=>t.classList.remove('show'), 2200);
 }
 
 function toISODate(d){
-  return d.toISOString ? new Date(d.getTime() - d.getTimezoneOffset()*60000).toISOString().slice(0,10) : d;
+return d.toISOString ? new Date(d.getTime() - d.getTimezoneOffset()*60000).toISOString().slice(0,10) : d;
 }
 
 /* ============================================================
-   Sélection du technicien — une seule fois, persistée localement
-   ============================================================ */
+Sélection du technicien — une seule fois, persistée localement
+============================================================ */
 let techId = localStorage.getItem('af_tech_id');
 let techNom = localStorage.getItem('af_tech_nom');
 
 async function initTechPicker(forcer){
-  if(techId && techNom && !forcer){
-    document.getElementById('techPicker').style.display = 'none';
-    document.getElementById('techNomActuel').textContent = techNom;
-    return;
-  }
-  const picker = document.getElementById('techPicker');
-  picker.style.display = 'flex';
-  const btnsDiv = document.getElementById('techBtns');
-  btnsDiv.innerHTML = '<p style="color:var(--ink-soft)">Chargement…</p>';
-  try{
-    const data = await appelerTechApp({ action:'techs_liste' });
-    btnsDiv.innerHTML = (data.techs||[]).map(t=>
-      `<button class="tech-btn" data-id="${t.id}" data-nom="${t.nom}">${t.nom}</button>`
-    ).join('');
-    btnsDiv.querySelectorAll('.tech-btn').forEach(b=>{
-      b.addEventListener('click', ()=>{
-        techId = b.dataset.id; techNom = b.dataset.nom;
-        localStorage.setItem('af_tech_id', techId);
-        localStorage.setItem('af_tech_nom', techNom);
-        picker.style.display = 'none';
-        document.getElementById('techNomActuel').textContent = techNom;
-        chargerJournee();
-      });
-    });
-  }catch(err){
-    btnsDiv.innerHTML = `<p style="color:var(--red)">Impossible de charger la liste des techniciens (${err.message}).</p>`;
-  }
+if(techId && techNom && !forcer){
+document.getElementById('techPicker').style.display = 'none';
+document.getElementById('techNomActuel').textContent = techNom;
+return;
+}
+const picker = document.getElementById('techPicker');
+picker.style.display = 'flex';
+const btnsDiv = document.getElementById('techBtns');
+btnsDiv.innerHTML = '<p style="color:var(--ink-soft)">Chargement…</p>';
+try{
+const data = await appelerTechApp({ action:'techs_liste' });
+btnsDiv.innerHTML = (data.techs||[]).map(t=>
+`<button class="tech-btn" data-id="${t.id}" data-nom="${t.nom}">${t.nom}</button>`
+).join('');
+btnsDiv.querySelectorAll('.tech-btn').forEach(b=>{
+b.addEventListener('click', ()=>{
+techId = b.dataset.id; techNom = b.dataset.nom;
+localStorage.setItem('af_tech_id', techId);
+localStorage.setItem('af_tech_nom', techNom);
+picker.style.display = 'none';
+document.getElementById('techNomActuel').textContent = techNom;
+chargerJournee();
+});
+});
+}catch(err){
+btnsDiv.innerHTML = `<p style="color:var(--red)">Impossible de charger la liste des techniciens (${err.message}).</p>`;
+}
 }
 document.getElementById('btnChangerTech').addEventListener('click', ()=> initTechPicker(true));
 
 /* ============================================================
-   Navigation par date + chargement de la journée (les 2 vans)
-   ============================================================ */
+Navigation par date + chargement de la journée (les 2 vans)
+============================================================ */
 let dateCourante = new Date();
 dateCourante.setHours(0,0,0,0);
 
 /* ============================================================
-   Bascule Jour / Mois
-   ============================================================ */
+Bascule Jour / Mois
+============================================================ */
 let vueCourante = 'jour';
 let moisCourant = new Date(dateCourante.getFullYear(), dateCourante.getMonth(), 1);
 
 function toggleVue(v){
-  vueCourante = v;
-  document.getElementById('btnVueJour').classList.toggle('active', v==='jour');
-  document.getElementById('btnVueMois').classList.toggle('active', v==='mois');
-  document.getElementById('vueJour').style.display = v==='jour' ? '' : 'none';
-  document.getElementById('vueMois').style.display = v==='mois' ? '' : 'none';
-  if(v==='mois'){
-    moisCourant = new Date(dateCourante.getFullYear(), dateCourante.getMonth(), 1);
-    chargerMois();
-  }
+vueCourante = v;
+document.getElementById('btnVueJour').classList.toggle('active', v==='jour');
+document.getElementById('btnVueMois').classList.toggle('active', v==='mois');
+document.getElementById('vueJour').style.display = v==='jour' ? '' : 'none';
+document.getElementById('vueMois').style.display = v==='mois' ? '' : 'none';
+if(v==='mois'){
+moisCourant = new Date(dateCourante.getFullYear(), dateCourante.getMonth(), 1);
+chargerMois();
+}
 }
 document.getElementById('btnVueJour').addEventListener('click', ()=>toggleVue('jour'));
 document.getElementById('btnVueMois').addEventListener('click', ()=>toggleVue('mois'));
 
 document.getElementById('btnMoisPrev').addEventListener('click', ()=>{
-  moisCourant.setMonth(moisCourant.getMonth()-1); chargerMois();
+moisCourant.setMonth(moisCourant.getMonth()-1); chargerMois();
 });
 document.getElementById('btnMoisNext').addEventListener('click', ()=>{
-  moisCourant.setMonth(moisCourant.getMonth()+1); chargerMois();
+moisCourant.setMonth(moisCourant.getMonth()+1); chargerMois();
 });
 
 function moisISO(d){
-  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`;
+return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`;
 }
 
 async function chargerMois(){
-  document.getElementById('moisLbl').textContent = `${MOIS[moisCourant.getMonth()]} ${moisCourant.getFullYear()}`;
-  const grid = document.getElementById('monthGrid');
-  grid.innerHTML = '<p class="empty-note">Chargement…</p>';
-  try{
-    const data = await appelerTechApp({ action:'jobs_mois', mois: moisISO(moisCourant) });
-    renderMonthGrid(data.comptes || {});
-  }catch(err){
-    grid.innerHTML = `<p class="empty-note">Impossible de charger le mois (${err.message}).</p>`;
-  }
+document.getElementById('moisLbl').textContent = `${MOIS[moisCourant.getMonth()]} ${moisCourant.getFullYear()}`;
+const grid = document.getElementById('monthGrid');
+grid.innerHTML = '<p class="empty-note">Chargement…</p>';
+try{
+const data = await appelerTechApp({ action:'jobs_mois', mois: moisISO(moisCourant) });
+renderMonthGrid(data.comptes || {});
+}catch(err){
+grid.innerHTML = `<p class="empty-note">Impossible de charger le mois (${err.message}).</p>`;
+}
 }
 
 function renderMonthGrid(comptes){
-  const grid = document.getElementById('monthGrid');
-  const annee = moisCourant.getFullYear(), mois = moisCourant.getMonth();
-  const premierJour = new Date(annee, mois, 1);
-  const nbJours = new Date(annee, mois+1, 0).getDate();
-  let decalage = premierJour.getDay() - 1; // grille commence le lundi
-  if(decalage < 0) decalage = 6;
-  const ajd = toISODate(new Date());
+const grid = document.getElementById('monthGrid');
+const annee = moisCourant.getFullYear(), mois = moisCourant.getMonth();
+const premierJour = new Date(annee, mois, 1);
+const nbJours = new Date(annee, mois+1, 0).getDate();
+let decalage = premierJour.getDay() - 1; // grille commence le lundi
+if(decalage < 0) decalage = 6;
+const ajd = toISODate(new Date());
 
-  let html = ['Lun','Mar','Mer','Jeu','Ven','Sam','Dim'].map(j=>`<div class="jour-sem">${j}</div>`).join('');
-  for(let i=0;i<decalage;i++) html += '<div class="month-cell vide"></div>';
-  for(let jour=1; jour<=nbJours; jour++){
-    const iso = `${annee}-${String(mois+1).padStart(2,'0')}-${String(jour).padStart(2,'0')}`;
-    const n = comptes[iso] || 0;
-    const estAjd = iso === ajd;
-    html += `<div class="month-cell${estAjd?' aujourdhui':''}" data-date="${iso}">
-      <div class="num">${jour}</div>
-      ${n>0 ? `<div class="badge">${n}</div>` : ''}
-    </div>`;
-  }
-  grid.innerHTML = html;
-  grid.querySelectorAll('.month-cell[data-date]').forEach(c=>{
-    c.addEventListener('click', ()=>{
-      const [an,mo,jr] = c.dataset.date.split('-').map(Number);
-      dateCourante = new Date(an, mo-1, jr);
-      renderDateLbl();
-      toggleVue('jour');
-      chargerJournee();
-    });
-  });
+let html = ['Lun','Mar','Mer','Jeu','Ven','Sam','Dim'].map(j=>`<div class="jour-sem">${j}</div>`).join('');
+for(let i=0;i<decalage;i++) html += '<div class="month-cell vide"></div>';
+for(let jour=1; jour<=nbJours; jour++){
+const iso = `${annee}-${String(mois+1).padStart(2,'0')}-${String(jour).padStart(2,'0')}`;
+const n = comptes[iso] || 0;
+const estAjd = iso === ajd;
+html += `<div class="month-cell${estAjd?' aujourdhui':''}" data-date="${iso}">
+<div class="num">${jour}</div>
+${n>0 ? `<div class="badge">${n}</div>` : ''}
+</div>`;
+}
+grid.innerHTML = html;
+grid.querySelectorAll('.month-cell[data-date]').forEach(c=>{
+c.addEventListener('click', ()=>{
+const [an,mo,jr] = c.dataset.date.split('-').map(Number);
+dateCourante = new Date(an, mo-1, jr);
+renderDateLbl();
+toggleVue('jour');
+chargerJournee();
+});
+});
 }
 
 function renderDateLbl(){
-  const iso = toISODate(dateCourante);
-  const estAujourdhui = iso === toISODate(new Date());
-  document.getElementById('dateLbl').innerHTML =
-    `${JOURS[dateCourante.getDay()]} ${dateCourante.getDate()} ${MOIS[dateCourante.getMonth()]}` +
-    (estAujourdhui ? '<small>Aujourd\'hui</small>' : '');
+const iso = toISODate(dateCourante);
+const estAujourdhui = iso === toISODate(new Date());
+document.getElementById('dateLbl').innerHTML =
+`${JOURS[dateCourante.getDay()]} ${dateCourante.getDate()} ${MOIS[dateCourante.getMonth()]}` +
+(estAujourdhui ? '<small>Aujourd\'hui</small>' : '');
 }
 
 document.getElementById('btnPrev').addEventListener('click', ()=>{
-  dateCourante.setDate(dateCourante.getDate()-1); renderDateLbl(); chargerJournee();
+dateCourante.setDate(dateCourante.getDate()-1); renderDateLbl(); chargerJournee();
 });
 document.getElementById('btnNext').addEventListener('click', ()=>{
-  dateCourante.setDate(dateCourante.getDate()+1); renderDateLbl(); chargerJournee();
+dateCourante.setDate(dateCourante.getDate()+1); renderDateLbl(); chargerJournee();
 });
 document.getElementById('btnAujourdhui').addEventListener('click', ()=>{
-  dateCourante = new Date(); dateCourante.setHours(0,0,0,0); renderDateLbl(); chargerJournee();
+dateCourante = new Date(); dateCourante.setHours(0,0,0,0); renderDateLbl(); chargerJournee();
 });
 
 function statutInfo(statut){
-  const map = {
-    'confirmé':   { classe:'st-attente', texte:'À venir' },
-    'en_route':   { classe:'st-route',   texte:'En route' },
-    'arrivé':     { classe:'st-arrive',  texte:'Arrivé' },
-    'travail_commencé': { classe:'st-cours', texte:'En cours' },
-    'pause':      { classe:'st-cours',   texte:'Pause' },
-    'terminé':    { classe:'st-termine', texte:'Terminé' },
-    'payé':       { classe:'st-termine', texte:'Payé' },
-    'problème':   { classe:'st-probleme',texte:'Problème' },
-  };
-  return map[statut] || { classe:'st-attente', texte: statut||'' };
+const map = {
+'confirmé': { classe:'st-attente', texte:'À venir' },
+'en_route': { classe:'st-route', texte:'En route' },
+'arrivé': { classe:'st-arrive', texte:'Arrivé' },
+'travail_commencé': { classe:'st-cours', texte:'En cours' },
+'pause': { classe:'st-cours', texte:'Pause' },
+'terminé': { classe:'st-termine', texte:'Terminé' },
+'payé': { classe:'st-termine', texte:'Payé' },
+'problème': { classe:'st-probleme',texte:'Problème' },
+};
+return map[statut] || { classe:'st-attente', texte: statut||'' };
 }
 
 function urlGoogleMaps(j){
-  // Coordonnées précises si on les a (géocodées à la réservation), sinon
-  // on laisse Google Maps résoudre l'adresse texte.
-  const query = (j.lat!=null && j.lng!=null) ? `${j.lat},${j.lng}` : (j.adresse||'');
-  return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(query)}`;
+// Coordonnées précises si on les a (géocodées à la réservation), sinon
+// on laisse Google Maps résoudre l'adresse texte.
+const query = (j.lat!=null && j.lng!=null) ? `${j.lat},${j.lng}` : (j.adresse||'');
+return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(query)}`;
 }
 
 function jobCardHtml(j){
-  const si = statutInfo(j.statut);
-  const dejaArrive = !!j.arrivee_ts;
-  const dejaParti = !!j.depart_ts;
-  let actions = '';
-  if(!dejaArrive){
-    actions += `<button class="btn-action" data-action="arrivee" data-job="${j.id}">📍 Arrivé</button>`;
-  } else if(!dejaParti){
-    actions += `<button class="btn-action" data-action="depart" data-job="${j.id}">🏁 Parti</button>`;
-  } else {
-    actions += `<button class="btn-action secondary" data-action="rapport" data-job="${j.id}">📋 Voir le rapport</button>`;
-  }
-  if(j.adresse || (j.lat!=null && j.lng!=null)){
-    actions += `<a class="btn-action secondary" href="${urlGoogleMaps(j)}" target="_blank" rel="noopener">🗺️ Carte</a>`;
-  }
-  actions += `<button class="btn-action photo" data-action="photo" data-job="${j.id}">📷 Photo</button>`;
-  actions += `<button class="btn-action secondary" data-action="notes" data-job="${j.id}">📝 Notes</button>`;
-  actions += `<button class="btn-action annuler" data-action="annuler" data-job="${j.id}">❌ Annuler</button>`;
+const si = statutInfo(j.statut);
+const dejaArrive = !!j.arrivee_ts;
+const dejaParti = !!j.depart_ts;
+let actions = '';
+if(!dejaArrive){
+actions += `<button class="btn-action" data-action="arrivee" data-job="${j.id}">📍 Arrivé</button>`;
+} else if(!dejaParti){
+actions += `<button class="btn-action" data-action="depart" data-job="${j.id}">🏁 Parti</button>`;
+} else {
+actions += `<button class="btn-action secondary" data-action="rapport" data-job="${j.id}">📋 Voir le rapport</button>`;
+}
+if(j.adresse || (j.lat!=null && j.lng!=null)){
+actions += `<a class="btn-action secondary" href="${urlGoogleMaps(j)}" target="_blank" rel="noopener">🗺️ Carte</a>`;
+}
+actions += `<button class="btn-action photo" data-action="photo" data-job="${j.id}">📷 Photo</button>`;
+actions += `<button class="btn-action secondary" data-action="notes" data-job="${j.id}">📝 Notes</button>`;
+actions += `<button class="btn-action annuler" data-action="annuler" data-job="${j.id}">❌ Annuler</button>`;
 
-  const sansVan = j.van_id == null;
-  const promptVan = (sansVan && vansCourants.length)
-    ? `<div class="prompt-van">⚠️ Van non assignée —
-        ${vansCourants.map(v=>`<button class="btn-van-choix" data-job="${j.id}" data-van="${v.id}">${v.nom}</button>`).join(' ')}
-      </div>`
-    : '';
+const sansVan = j.van_id == null;
+const promptVan = (sansVan && vansCourants.length)
+? `<div class="prompt-van">⚠️ Van non assignée —
+${vansCourants.map(v=>`<button class="btn-van-choix" data-job="${j.id}" data-van="${v.id}">${v.nom}</button>`).join(' ')}
+</div>`
+: '';
 
-  const vanActuelle = vansCourants.find(v=>v.id===j.van_id);
-  const autresVans = vansCourants.filter(v=>v.id!==j.van_id);
-  const transfertVan = (!sansVan && vanActuelle && autresVans.length)
-    ? `<div class="van-transfert">🚐 ${vanActuelle.nom} —
-        ${autresVans.map(v=>`<button class="btn-van-swap" data-job="${j.id}" data-van="${v.id}">Transférer à ${v.nom}</button>`).join(' ')}
-      </div>`
-    : '';
+const vanActuelle = vansCourants.find(v=>v.id===j.van_id);
+const autresVans = vansCourants.filter(v=>v.id!==j.van_id);
+const transfertVan = (!sansVan && vanActuelle && autresVans.length)
+? `<div class="van-transfert">🚐 ${vanActuelle.nom} —
+${autresVans.map(v=>`<button class="btn-van-swap" data-job="${j.id}" data-van="${v.id}">Transférer à ${v.nom}</button>`).join(' ')}
+</div>`
+: '';
 
-  return `<div class="job-card${sansVan?' sans-van':''}" data-jobcard="${j.id}">
-    ${promptVan}
-    ${transfertVan}
-    <div class="heure">${j.heure_debut} – ${j.heure_fin}</div>
-    <div class="client">${j.client_nom}</div>
-    <div class="adresse">${j.adresse||''}</div>
-    <div class="services">${(j.services||[]).join(', ')}</div>
-    <div><span class="badge-statut ${si.classe}">${si.texte}</span></div>
-    <div class="job-actions">${actions}</div>
-    <div class="nb-photos" data-nbphotos="${j.id}">${j.nb_photos>0 ? `📷 ${j.nb_photos} photo(s)` : ''}</div>
-  </div>`;
+let heuresReelles = '';
+if(dejaArrive || dejaParti){
+heuresReelles = '<div class="heures-reelles">';
+if(dejaArrive) heuresReelles += `<span class="heure-reelle-tag" data-action="corriger-arrivee" data-job="${j.id}">📍 ${fmtHeureCourte(j.arrivee_ts)} <span class="corriger">corriger</span></span>`;
+if(dejaParti) heuresReelles += `<span class="heure-reelle-tag" data-action="corriger-depart" data-job="${j.id}">🏁 ${fmtHeureCourte(j.depart_ts)} <span class="corriger">corriger</span></span>`;
+heuresReelles += '</div>';
+}
+
+return `<div class="job-card${sansVan?' sans-van':''}" data-jobcard="${j.id}">
+${promptVan}
+${transfertVan}
+<div class="heure">${j.heure_debut} – ${j.heure_fin} <button class="btn-heure-edit" data-action="modifier-heure" data-job="${j.id}" title="Modifier l'heure prévue">✏️</button></div>
+<div class="client">${j.client_nom}</div>
+<div class="adresse">${j.adresse||''}</div>
+<div class="services">${(j.services||[]).join(', ')}</div>
+<div><span class="badge-statut ${si.classe}">${si.texte}</span></div>
+${heuresReelles}
+<div class="job-actions">${actions}</div>
+<div class="nb-photos" data-nbphotos="${j.id}">${j.nb_photos>0 ? `📷 ${j.nb_photos} photo(s)` : ''}</div>
+</div>`;
 }
 
 let jobsCourants = [];
 let vansCourants = [];
 
+function fmtHeureCourte(ts){
+if(!ts) return '—';
+return new Date(ts).toLocaleTimeString('fr-CA', { hour:'2-digit', minute:'2-digit' });
+}
+
 async function chargerJournee(){
-  const grid = document.getElementById('vansGrid');
-  grid.innerHTML = '<p class="empty-note">Chargement des jobs…</p>';
-  try{
-    const data = await appelerTechApp({ action:'jobs_jour', date: toISODate(dateCourante) });
-    vansCourants = data.vans || [];
-    jobsCourants = data.jobs || [];
-    renderVansGrid();
-  }catch(err){
-    grid.innerHTML = `<p class="empty-note">Impossible de charger la journée (${err.message}).</p>`;
-  }
+const grid = document.getElementById('vansGrid');
+grid.innerHTML = '<p class="empty-note">Chargement des jobs…</p>';
+try{
+const data = await appelerTechApp({ action:'jobs_jour', date: toISODate(dateCourante) });
+vansCourants = data.vans || [];
+jobsCourants = data.jobs || [];
+renderVansGrid();
+}catch(err){
+grid.innerHTML = `<p class="empty-note">Impossible de charger la journée (${err.message}).</p>`;
+}
 }
 
 function renderVansGrid(){
-  const grid = document.getElementById('vansGrid');
-  const sansVanDiv = document.getElementById('sansVanSection');
-  const sansVan = jobsCourants.filter(j=>j.van_id==null);
-  sansVanDiv.innerHTML = sansVan.length
-    ? `<div class="sans-van-header">⚠️ Sans van assignée (${sansVan.length})</div>${sansVan.map(jobCardHtml).join('')}`
-    : '';
+const grid = document.getElementById('vansGrid');
+const sansVanDiv = document.getElementById('sansVanSection');
+const sansVan = jobsCourants.filter(j=>j.van_id==null);
+sansVanDiv.innerHTML = sansVan.length
+? `<div class="sans-van-header">⚠️ Sans van assignée (${sansVan.length})</div>${sansVan.map(jobCardHtml).join('')}`
+: '';
 
-  if(!vansCourants.length){
-    grid.innerHTML = '<p class="empty-note">Aucune van configurée.</p>';
-    attacherActionsJobs();
-    return;
-  }
-  grid.innerHTML = vansCourants.map(v=>{
-    const jobsVan = jobsCourants.filter(j=>j.van_id===v.id);
-    const contenu = jobsVan.length
-      ? jobsVan.map(jobCardHtml).join('')
-      : '<p class="empty-note">Aucun job cette journée.</p>';
-    return `<div class="van-col"><h3>${v.nom}</h3>${contenu}</div>`;
-  }).join('');
-  attacherActionsJobs();
+if(!vansCourants.length){
+grid.innerHTML = '<p class="empty-note">Aucune van configurée.</p>';
+attacherActionsJobs();
+return;
+}
+grid.innerHTML = vansCourants.map(v=>{
+const jobsVan = jobsCourants.filter(j=>j.van_id===v.id);
+const contenu = jobsVan.length
+? jobsVan.map(jobCardHtml).join('')
+: '<p class="empty-note">Aucun job cette journée.</p>';
+return `<div class="van-col"><h3>${v.nom}</h3>${contenu}</div>`;
+}).join('');
+attacherActionsJobs();
 }
 
 function attacherActionsJobs(){
-  document.querySelectorAll('.btn-action[data-action="arrivee"]').forEach(b=>{
-    b.addEventListener('click', ()=>marquerEvenement(b.dataset.job, 'arrivee'));
-  });
-  document.querySelectorAll('.btn-action[data-action="depart"]').forEach(b=>{
-    b.addEventListener('click', ()=>marquerEvenement(b.dataset.job, 'depart'));
-  });
-  document.querySelectorAll('.btn-action[data-action="rapport"]').forEach(b=>{
-    b.addEventListener('click', ()=>ouvrirRapport(b.dataset.job));
-  });
-  document.querySelectorAll('.btn-action[data-action="photo"]').forEach(b=>{
-    b.addEventListener('click', ()=>declencherUploadPhoto(b.dataset.job));
-  });
-  document.querySelectorAll('.btn-action[data-action="notes"]').forEach(b=>{
-    b.addEventListener('click', ()=>ouvrirNotes(b.dataset.job));
-  });
-  document.querySelectorAll('.btn-action[data-action="annuler"]').forEach(b=>{
-    b.addEventListener('click', ()=>confirmerAnnulation(b.dataset.job));
-  });
-  document.querySelectorAll('.btn-van-choix').forEach(b=>{
-    b.addEventListener('click', ()=>assignerVan(b.dataset.job, b.dataset.van));
-  });
-  document.querySelectorAll('.btn-van-swap').forEach(b=>{
-    b.addEventListener('click', ()=>assignerVan(b.dataset.job, b.dataset.van));
-  });
+document.querySelectorAll('.btn-action[data-action="arrivee"]').forEach(b=>{
+b.addEventListener('click', ()=>ouvrirHeureModal(b.dataset.job, 'arrivee'));
+});
+document.querySelectorAll('.btn-action[data-action="depart"]').forEach(b=>{
+b.addEventListener('click', ()=>ouvrirHeureModal(b.dataset.job, 'depart'));
+});
+document.querySelectorAll('[data-action="corriger-arrivee"]').forEach(b=>{
+b.addEventListener('click', ()=>ouvrirHeureModal(b.dataset.job, 'arrivee'));
+});
+document.querySelectorAll('[data-action="corriger-depart"]').forEach(b=>{
+b.addEventListener('click', ()=>ouvrirHeureModal(b.dataset.job, 'depart'));
+});
+document.querySelectorAll('[data-action="modifier-heure"]').forEach(b=>{
+b.addEventListener('click', ()=>ouvrirHoraireModal(b.dataset.job));
+});
+document.querySelectorAll('.btn-action[data-action="rapport"]').forEach(b=>{
+b.addEventListener('click', ()=>ouvrirRapport(b.dataset.job));
+});
+document.querySelectorAll('.btn-action[data-action="photo"]').forEach(b=>{
+b.addEventListener('click', ()=>declencherUploadPhoto(b.dataset.job));
+});
+document.querySelectorAll('.btn-action[data-action="notes"]').forEach(b=>{
+b.addEventListener('click', ()=>ouvrirNotes(b.dataset.job));
+});
+document.querySelectorAll('.btn-action[data-action="annuler"]').forEach(b=>{
+b.addEventListener('click', ()=>confirmerAnnulation(b.dataset.job));
+});
+document.querySelectorAll('.btn-van-choix').forEach(b=>{
+b.addEventListener('click', ()=>assignerVan(b.dataset.job, b.dataset.van));
+});
+document.querySelectorAll('.btn-van-swap').forEach(b=>{
+b.addEventListener('click', ()=>assignerVan(b.dataset.job, b.dataset.van));
+});
 }
 
 /* ============================================================
-   Assigner une van à un rdv qui n'en a pas
-   ============================================================ */
+Heure d'arrivée / départ — modifiable avant confirmation, et
+corrigeable après coup (même modal, réutilisée dans les deux cas)
+============================================================ */
+function heureLocaleCourante(){
+const d = new Date();
+return `${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`;
+}
+
+function ouvrirHeureModal(jobId, type){
+const job = jobsCourants.find(j=>j.id===jobId);
+if(!job) return;
+const tsExistant = type==='arrivee' ? job.arrivee_ts : job.depart_ts;
+const heureDefaut = tsExistant ? fmtHeureCourte(tsExistant) : heureLocaleCourante();
+const titre = type==='arrivee' ? 'Heure d\'arrivée' : 'Heure de départ';
+
+const bg = document.getElementById('modalHeureBg');
+const modal = document.getElementById('modalHeure');
+modal.innerHTML = `
+<button class="modal-close" id="btnFermerHeure">×</button>
+<h2>${titre}</h2>
+<div class="sub">${job.client_nom} · ${job.heure_debut} – ${job.heure_fin}</div>
+<div class="form-grid" style="grid-template-columns:1fr;">
+<label>Heure ${tsExistant ? '(déjà enregistrée — modifiable)' : '(modifiable avant de confirmer)'}</label>
+<input type="time" id="inpHeureEvenement" value="${heureDefaut}">
+</div>
+<div class="modal-btns">
+<button class="btn-fermer" id="btnFermerHeure2">Annuler</button>
+<button class="btn-print" id="btnConfirmerHeure">Confirmer</button>
+</div>
+`;
+bg.style.display = 'flex';
+document.getElementById('btnFermerHeure').addEventListener('click', fermerHeureModal);
+document.getElementById('btnFermerHeure2').addEventListener('click', fermerHeureModal);
+document.getElementById('btnConfirmerHeure').addEventListener('click', ()=>confirmerHeureEvenement(job, type));
+}
+function fermerHeureModal(){
+document.getElementById('modalHeureBg').style.display = 'none';
+}
+async function confirmerHeureEvenement(job, type){
+const val = document.getElementById('inpHeureEvenement').value;
+if(!val){ showToast('Choisis une heure'); return; }
+const [h, m] = val.split(':').map(Number);
+const d = new Date(job.date + 'T00:00:00');
+d.setHours(h, m, 0, 0);
+try{
+await appelerTechApp({ action:'evenement', job_id: job.id, tech_id: techId, type, timestamp: d.toISOString() });
+showToast(type==='arrivee' ? 'Arrivée enregistrée' : 'Départ enregistré');
+fermerHeureModal();
+await chargerJournee();
+if(type === 'depart') ouvrirRapport(job.id);
+}catch(err){
+showToast(`Erreur: ${err.message}`);
+}
+}
+
+/* ============================================================
+Modifier l'heure (et la date) prévue d'un rendez-vous
+============================================================ */
+function ouvrirHoraireModal(jobId){
+const job = jobsCourants.find(j=>j.id===jobId);
+if(!job) return;
+const bg = document.getElementById('modalHoraireBg');
+const modal = document.getElementById('modalHoraire');
+modal.innerHTML = `
+<button class="modal-close" id="btnFermerHoraire">×</button>
+<h2>Modifier l'heure prévue</h2>
+<div class="sub">${job.client_nom}</div>
+<div class="form-grid">
+<label>Date</label>
+<input type="date" id="inpHoraireDate" value="${job.date}">
+<label>Heure début</label>
+<input type="time" id="inpHoraireDebut" value="${job.heure_debut}">
+<label>Heure fin</label>
+<input type="time" id="inpHoraireFin" value="${job.heure_fin}">
+</div>
+<div class="modal-btns">
+<button class="btn-fermer" id="btnFermerHoraire2">Annuler</button>
+<button class="btn-print" id="btnConfirmerHoraire">Enregistrer</button>
+</div>
+`;
+bg.style.display = 'flex';
+document.getElementById('btnFermerHoraire').addEventListener('click', fermerHoraireModal);
+document.getElementById('btnFermerHoraire2').addEventListener('click', fermerHoraireModal);
+document.getElementById('btnConfirmerHoraire').addEventListener('click', ()=>confirmerHoraire(jobId));
+}
+function fermerHoraireModal(){
+document.getElementById('modalHoraireBg').style.display = 'none';
+}
+async function confirmerHoraire(jobId){
+const date = document.getElementById('inpHoraireDate').value;
+const heure_debut = document.getElementById('inpHoraireDebut').value;
+const heure_fin = document.getElementById('inpHoraireFin').value;
+if(!date || !heure_debut || !heure_fin){ showToast('Tous les champs sont requis'); return; }
+try{
+await appelerTechApp({ action:'modifier_horaire', job_id: jobId, date, heure_debut, heure_fin });
+showToast('Heure mise à jour');
+fermerHoraireModal();
+await chargerJournee();
+}catch(err){
+showToast(`Erreur: ${err.message}`);
+}
+}
+
+/* ============================================================
+Assigner une van à un rdv qui n'en a pas
+============================================================ */
 async function assignerVan(jobId, vanId){
-  try{
-    await appelerTechApp({ action:'assigner_van', job_id: jobId, van_id: vanId, tech_id: techId });
-    showToast('Van assignée');
-    await chargerJournee();
-  }catch(err){
-    showToast(`Erreur: ${err.message}`);
-  }
+try{
+await appelerTechApp({ action:'assigner_van', job_id: jobId, van_id: vanId, tech_id: techId });
+showToast('Van assignée');
+await chargerJournee();
+}catch(err){
+showToast(`Erreur: ${err.message}`);
+}
 }
 
 /* ============================================================
-   Notes (lecture + ajout)
-   ============================================================ */
+Notes (lecture + ajout)
+============================================================ */
 function ouvrirNotes(jobId){
-  const job = jobsCourants.find(j=>j.id===jobId);
-  if(!job) return;
-  const bg = document.getElementById('modalNotesBg');
-  const modal = document.getElementById('modalNotes');
-  modal.innerHTML = `
-    <button class="modal-close" id="btnFermerNotes">×</button>
-    <h2>Notes</h2>
-    <div class="sub">${job.client_nom} · ${job.heure_debut}</div>
-    <div class="notes-lues">${job.notes ? job.notes.replace(/</g,'&lt;') : '<span style="color:var(--ink-soft); font-style:italic;">Aucune note pour ce moment.</span>'}</div>
-    <label style="font-size:12.5px; color:var(--ink-soft);">Ajouter une note</label>
-    <textarea id="inpNouvelleNote" rows="3" placeholder="ex: chien dans la cour, client a rappelé pour..."></textarea>
-    <div class="modal-btns">
-      <button class="btn-fermer" id="btnFermerNotes2">Fermer</button>
-      <button class="btn-print" id="btnEnregistrerNote">Enregistrer la note</button>
-    </div>
-  `;
-  bg.style.display = 'flex';
-  document.getElementById('btnFermerNotes').addEventListener('click', fermerNotes);
-  document.getElementById('btnFermerNotes2').addEventListener('click', fermerNotes);
-  document.getElementById('btnEnregistrerNote').addEventListener('click', ()=>enregistrerNote(jobId));
+const job = jobsCourants.find(j=>j.id===jobId);
+if(!job) return;
+const bg = document.getElementById('modalNotesBg');
+const modal = document.getElementById('modalNotes');
+modal.innerHTML = `
+<button class="modal-close" id="btnFermerNotes">×</button>
+<h2>Notes</h2>
+<div class="sub">${job.client_nom} · ${job.heure_debut}</div>
+<div class="notes-lues">${job.notes ? job.notes.replace(/</g,'&lt;') : '<span style="color:var(--ink-soft); font-style:italic;">Aucune note pour ce moment.</span>'}</div>
+<label style="font-size:12.5px; color:var(--ink-soft);">Ajouter une note</label>
+<textarea id="inpNouvelleNote" rows="3" placeholder="ex: chien dans la cour, client a rappelé pour..."></textarea>
+<div class="modal-btns">
+<button class="btn-fermer" id="btnFermerNotes2">Fermer</button>
+<button class="btn-print" id="btnEnregistrerNote">Enregistrer la note</button>
+</div>
+`;
+bg.style.display = 'flex';
+document.getElementById('btnFermerNotes').addEventListener('click', fermerNotes);
+document.getElementById('btnFermerNotes2').addEventListener('click', fermerNotes);
+document.getElementById('btnEnregistrerNote').addEventListener('click', ()=>enregistrerNote(jobId));
 }
 function fermerNotes(){
-  document.getElementById('modalNotesBg').style.display = 'none';
+document.getElementById('modalNotesBg').style.display = 'none';
 }
 async function enregistrerNote(jobId){
-  const zone = document.getElementById('inpNouvelleNote');
-  const texte = zone.value.trim();
-  if(!texte) return;
-  try{
-    await appelerTechApp({ action:'ajouter_note', job_id: jobId, tech_id: techId, note: texte });
-    showToast('Note enregistrée');
-    fermerNotes();
-    await chargerJournee();
-  }catch(err){
-    showToast(`Erreur: ${err.message}`);
-  }
+const zone = document.getElementById('inpNouvelleNote');
+const texte = zone.value.trim();
+if(!texte) return;
+try{
+await appelerTechApp({ action:'ajouter_note', job_id: jobId, tech_id: techId, note: texte });
+showToast('Note enregistrée');
+fermerNotes();
+await chargerJournee();
+}catch(err){
+showToast(`Erreur: ${err.message}`);
+}
 }
 
 /* ============================================================
-   Annulation d'un rendez-vous
-   ============================================================ */
+Annulation d'un rendez-vous
+============================================================ */
 async function confirmerAnnulation(jobId){
-  const job = jobsCourants.find(j=>j.id===jobId);
-  const nomClient = job ? job.client_nom : 'ce rendez-vous';
-  if(!confirm(`Annuler le rendez-vous de ${nomClient}? Cette action est irréversible.`)) return;
-  try{
-    await appelerTechApp({ action:'annuler', job_id: jobId, tech_id: techId });
-    showToast('Rendez-vous annulé');
-    await chargerJournee();
-  }catch(err){
-    showToast(`Erreur: ${err.message}`);
-  }
+const job = jobsCourants.find(j=>j.id===jobId);
+const nomClient = job ? job.client_nom : 'ce rendez-vous';
+if(!confirm(`Annuler le rendez-vous de ${nomClient}? Cette action est irréversible.`)) return;
+try{
+await appelerTechApp({ action:'annuler', job_id: jobId, tech_id: techId });
+showToast('Rendez-vous annulé');
+await chargerJournee();
+}catch(err){
+showToast(`Erreur: ${err.message}`);
 }
-
-async function marquerEvenement(jobId, type){
-  try{
-    await appelerTechApp({ action:'evenement', job_id: jobId, tech_id: techId, type });
-    showToast(type==='arrivee' ? 'Arrivée enregistrée' : 'Départ enregistré');
-    await chargerJournee();
-    // Rapport automatique dès que le job est marqué "parti".
-    if(type === 'depart') ouvrirRapport(jobId);
-  }catch(err){
-    showToast(`Erreur: ${err.message}`);
-  }
 }
 
 /* ============================================================
-   Photos
-   ============================================================ */
+Photos
+============================================================ */
 let jobPourUpload = null;
 const inputPhoto = document.createElement('input');
 inputPhoto.type = 'file';
@@ -591,227 +722,265 @@ inputPhoto.multiple = true;
 document.body.appendChild(inputPhoto);
 
 function declencherUploadPhoto(jobId){
-  jobPourUpload = jobId;
-  inputPhoto.value = '';
-  inputPhoto.click();
+jobPourUpload = jobId;
+inputPhoto.value = '';
+inputPhoto.click();
+}
+
+// Redimensionne + recompresse une photo directement sur le téléphone avant
+// l'envoi (max 1600px de côté, JPEG qualité 80%) — évite les photos de
+// plusieurs Mo qui bloquent l'envoi par texto au client, et convertit au
+// passage les photos HEIC (format par défaut sur beaucoup d'iPhone) en JPEG,
+// un format que tous les navigateurs affichent correctement. Si la
+// compression échoue pour une raison quelconque (vieux navigateur, format
+// non supporté), on retombe sur l'envoi du fichier original plutôt que de
+// bloquer le tech sur le terrain.
+const TAILLE_MAX_PHOTO = 1600;
+const QUALITE_PHOTO = 0.8;
+
+function fichierEnBase64(f){
+return new Promise((resolve,reject)=>{
+const reader = new FileReader();
+reader.onload = ()=>resolve(reader.result);
+reader.onerror = reject;
+reader.readAsDataURL(f);
+});
+}
+
+async function compresserPhoto(f){
+try{
+const bitmap = await createImageBitmap(f);
+let { width, height } = bitmap;
+if(width > TAILLE_MAX_PHOTO || height > TAILLE_MAX_PHOTO){
+if(width >= height){
+height = Math.round(height * (TAILLE_MAX_PHOTO / width));
+width = TAILLE_MAX_PHOTO;
+}else{
+width = Math.round(width * (TAILLE_MAX_PHOTO / height));
+height = TAILLE_MAX_PHOTO;
+}
+}
+const canvas = document.createElement('canvas');
+canvas.width = width;
+canvas.height = height;
+canvas.getContext('2d').drawImage(bitmap, 0, 0, width, height);
+bitmap.close();
+const blob = await new Promise(resolve=>canvas.toBlob(resolve, 'image/jpeg', QUALITE_PHOTO));
+if(!blob) throw new Error('toBlob a échoué');
+const base64 = await fichierEnBase64(blob);
+const nomBase = (f.name || 'photo').replace(/\.[^.]+$/, '');
+return { base64, filename: `${nomBase}.jpg` };
+}catch(err){
+console.error('Compression photo échouée, envoi de l\'original', err);
+const base64 = await fichierEnBase64(f);
+return { base64, filename: f.name };
+}
 }
 
 inputPhoto.addEventListener('change', async ()=>{
-  const fichiers = [...inputPhoto.files];
-  if(!fichiers.length || !jobPourUpload) return;
-  showToast(`Envoi de ${fichiers.length} photo(s)…`);
-  let ok = 0;
-  for(const f of fichiers){
-    try{
-      const base64 = await new Promise((resolve,reject)=>{
-        const reader = new FileReader();
-        reader.onload = ()=>resolve(reader.result);
-        reader.onerror = reject;
-        reader.readAsDataURL(f);
-      });
-      await appelerTechApp({
-        action:'photo_upload', job_id: jobPourUpload, tech_id: techId,
-        image_base64: base64, filename: f.name
-      });
-      ok++;
-    }catch(err){
-      console.error(err);
-    }
-  }
-  showToast(`${ok}/${fichiers.length} photo(s) envoyée(s)`);
-  await chargerJournee();
+const fichiers = [...inputPhoto.files];
+if(!fichiers.length || !jobPourUpload) return;
+showToast(`Envoi de ${fichiers.length} photo(s)…`);
+let ok = 0;
+for(const f of fichiers){
+try{
+const { base64, filename } = await compresserPhoto(f);
+await appelerTechApp({
+action:'photo_upload', job_id: jobPourUpload, tech_id: techId,
+image_base64: base64, filename
+});
+ok++;
+}catch(err){
+console.error(err);
+}
+}
+showToast(`${ok}/${fichiers.length} photo(s) envoyée(s)`);
+await chargerJournee();
 });
 
 /* ============================================================
-   Rapport automatique
-   ============================================================ */
+Rapport automatique
+============================================================ */
 function fmtHeure(ts){
-  if(!ts) return '—';
-  return new Date(ts).toLocaleTimeString('fr-CA', { hour:'2-digit', minute:'2-digit' });
+if(!ts) return '—';
+return new Date(ts).toLocaleTimeString('fr-CA', { hour:'2-digit', minute:'2-digit' });
 }
 function fmtDuree(debut, fin){
-  if(!debut || !fin) return '—';
-  const min = Math.round((new Date(fin) - new Date(debut))/60000);
-  const h = Math.floor(min/60), m = min%60;
-  return h>0 ? `${h} h ${m} min` : `${m} min`;
-}
-
-function urlRapportClient(jobId){
-  return `${window.location.origin}${window.location.pathname.replace(/app-tech\.html$/, 'rapport-client.html')}?job=${jobId}`;
-}
-
-function lienClientHtml(jobId){
-  const url = urlRapportClient(jobId);
-  return `<div style="background:var(--teal-tint); border-radius:9px; padding:10px 12px; font-size:12.5px; word-break:break-all; margin-bottom:8px;">${url}</div>
-    <div style="display:flex; gap:8px;">
-      <button class="btn-action secondary" onclick="copierLienClient('${jobId}')">📋 Copier le lien</button>
-      ${navigator.share ? `<button class="btn-action secondary" onclick="partagerLienClient('${jobId}')">📤 Partager</button>` : ''}
-    </div>`;
-}
-
-async function preparerLienClient(jobId){
-  const annees = document.getElementById('inpAnnees').value || 2;
-  const zone = document.getElementById('zoneLienClient');
-  zone.innerHTML = '<p class="empty-note">Préparation…</p>';
-  try{
-    await appelerTechApp({ action:'preparer_rappel_client', job_id: jobId, annees });
-    zone.innerHTML = lienClientHtml(jobId);
-    showToast('Lien prêt à partager avec le client');
-  }catch(err){
-    zone.innerHTML = `<p class="empty-note">Erreur: ${err.message}</p>`;
-  }
-}
-
-function copierLienClient(jobId){
-  navigator.clipboard.writeText(urlRapportClient(jobId)).then(()=>showToast('Lien copié'));
-}
-
-function partagerLienClient(jobId){
-  navigator.share({ title:'Rapport Air-FP', url: urlRapportClient(jobId) }).catch(()=>{});
+if(!debut || !fin) return '—';
+const min = Math.round((new Date(fin) - new Date(debut))/60000);
+const h = Math.floor(min/60), m = min%60;
+return h>0 ? `${h} h ${m} min` : `${m} min`;
 }
 
 async function ouvrirRapport(jobId){
-  const bg = document.getElementById('modalRapportBg');
-  const modal = document.getElementById('modalRapport');
-  bg.style.display = 'flex';
-  modal.innerHTML = '<p class="empty-note">Chargement du rapport…</p>';
-  try{
-    const data = await appelerTechApp({ action:'rapport', job_id: jobId });
-    const j = data.job, c = data.client || {};
-    modal.innerHTML = `
-      <button class="modal-close" id="btnFermerRapport">×</button>
-      <h2>Rapport de job</h2>
-      <div class="sub">${data.van_nom||''} · ${j.date}</div>
-      <div class="rapport-row"><span>Client</span><span>${c.nom||''}</span></div>
-      <div class="rapport-row"><span>Adresse</span><span>${j.adresse||c.adresse||''} ${(j.adresse||c.adresse||j.lat!=null) ? `<a href="${urlGoogleMaps({adresse:j.adresse||c.adresse, lat:j.lat, lng:j.lng})}" target="_blank" rel="noopener" style="color:var(--teal);">🗺️</a>` : ''}</span></div>
-      <div class="rapport-row"><span>Téléphone</span><span>${c.telephone||'—'}</span></div>
-      <div class="rapport-row"><span>Services</span><span>${(data.services||[]).join(', ')}</span></div>
-      <div class="rapport-row"><span>Heure prévue</span><span>${j.heure_debut} – ${j.heure_fin}</span></div>
-      <div class="rapport-row"><span>Arrivée réelle</span><span>${fmtHeure(data.arrivee_ts)}</span></div>
-      <div class="rapport-row"><span>Départ réel</span><span>${fmtHeure(data.depart_ts)}</span></div>
-      <div class="rapport-row"><span>Durée réelle</span><span>${fmtDuree(data.arrivee_ts, data.depart_ts)}</span></div>
-      ${j.notes ? `<div class="rapport-row"><span>Notes</span><span>${j.notes}</span></div>` : ''}
-      ${(data.photos||[]).length ? `<div class="rapport-photos">${data.photos.map(p=>`<img src="${p.url}">`).join('')}</div>` : '<p class="empty-note">Aucune photo pour ce job.</p>'}
-      <div style="margin-top:18px; padding-top:14px; border-top:1.5px solid var(--line);">
-        <h3 style="font-size:13px; text-transform:uppercase; font-family:var(--font-mono); color:var(--teal-dark); margin:0 0 10px;">Rapport client & rappel</h3>
-        <label style="font-size:12.5px; color:var(--ink-soft);">Entretien recommandé dans…</label>
-        <div style="display:flex; gap:8px; align-items:center; margin:6px 0 12px;">
-          <input type="number" id="inpAnnees" min="1" max="10" step="1" value="${data.rappel?.annees_recommandees ?? 2}" style="width:60px; padding:8px; border:1.5px solid var(--line); border-radius:8px; font-family:var(--font-body); font-size:14px;">
-          <span style="font-size:13px; color:var(--ink-soft);">an(s)</span>
-          <button id="btnPreparerLien" style="margin-left:auto; padding:9px 14px; border-radius:8px; border:1.5px solid var(--teal); background:var(--surface); color:var(--teal-dark); font-family:var(--font-body); font-size:13px; font-weight:600; cursor:pointer;">Préparer le lien client</button>
-        </div>
-        <div id="zoneLienClient">${data.rappel ? lienClientHtml(jobId) : ''}</div>
-      </div>
-      <div class="modal-btns">
-        <button class="btn-fermer" id="btnFermerRapport2">Fermer</button>
-        <button class="btn-print" onclick="window.print()">Imprimer / PDF</button>
-      </div>
-    `;
-    document.getElementById('btnFermerRapport').addEventListener('click', fermerRapport);
-    document.getElementById('btnFermerRapport2').addEventListener('click', fermerRapport);
-    document.getElementById('btnPreparerLien').addEventListener('click', ()=>preparerLienClient(jobId));
-  }catch(err){
-    modal.innerHTML = `<p class="empty-note">Impossible de charger le rapport (${err.message}).</p>
-      <div class="modal-btns"><button class="btn-fermer" onclick="document.getElementById('modalRapportBg').style.display='none'">Fermer</button></div>`;
-  }
+const bg = document.getElementById('modalRapportBg');
+const modal = document.getElementById('modalRapport');
+bg.style.display = 'flex';
+modal.innerHTML = '<p class="empty-note">Chargement du rapport…</p>';
+try{
+const data = await appelerTechApp({ action:'rapport', job_id: jobId });
+const j = data.job, c = data.client || {};
+const rapportDejaEnvoye = !!data.rappel;
+const anneesDefaut = data.rappel?.annees_recommandees || 2;
+
+const sectionEnvoiClient = `<div style="margin-top:18px; padding-top:14px; border-top:1.5px solid var(--line);">
+<h3 style="font-size:13px; text-transform:uppercase; font-family:var(--font-mono); color:var(--teal-dark); margin:0 0 10px;">Rapport client</h3>
+${rapportDejaEnvoye ? `<p class="empty-note" style="padding:0 0 10px;">✅ Déjà envoyé au client — recommandation actuelle : ${anneesDefaut} an(s). Tu peux le renvoyer si quelque chose a changé.</p>` : ''}
+<label style="font-size:12.5px; color:var(--ink-soft);">Notes particulières (optionnel)</label>
+<textarea id="inpNoteFinJob" rows="2" placeholder="ex: accès difficile, recommandation particulière..." style="width:100%; margin:6px 0 12px; padding:10px; border:1.5px solid var(--line); border-radius:9px; font-family:var(--font-body); font-size:14px; box-sizing:border-box;"></textarea>
+<label style="font-size:12.5px; color:var(--ink-soft);">Entretien recommandé dans…</label>
+<div style="display:flex; gap:8px; align-items:center; margin:6px 0 12px;">
+<input type="number" id="inpAnneesFinJob" min="1" max="5" step="1" value="${anneesDefaut}" style="width:60px; padding:8px; border:1.5px solid var(--line); border-radius:8px; font-family:var(--font-body); font-size:14px;">
+<span style="font-size:13px; color:var(--ink-soft);">an(s)</span>
+</div>
+<button class="btn-action" id="btnEnvoyerRapportClient" style="width:100%;">📨 ${rapportDejaEnvoye ? 'Renvoyer' : 'Envoyer'} le rapport au client</button>
+</div>`;
+
+modal.innerHTML = `
+<button class="modal-close" id="btnFermerRapport">×</button>
+<h2>Rapport de job</h2>
+<div class="sub">${data.van_nom||''} · ${j.date}</div>
+<div class="rapport-row"><span>Client</span><span>${c.nom||''}</span></div>
+<div class="rapport-row"><span>Adresse</span><span>${j.adresse||c.adresse||''} ${(j.adresse||c.adresse||j.lat!=null) ? `<a href="${urlGoogleMaps({adresse:j.adresse||c.adresse, lat:j.lat, lng:j.lng})}" target="_blank" rel="noopener" style="color:var(--teal);">🗺️</a>` : ''}</span></div>
+<div class="rapport-row"><span>Téléphone</span><span>${c.telephone||'—'}</span></div>
+<div class="rapport-row"><span>Services</span><span>${(data.services||[]).join(', ')}</span></div>
+<div class="rapport-row"><span>Heure prévue</span><span>${j.heure_debut} – ${j.heure_fin}</span></div>
+<div class="rapport-row"><span>Arrivée réelle</span><span>${fmtHeure(data.arrivee_ts)}</span></div>
+<div class="rapport-row"><span>Départ réel</span><span>${fmtHeure(data.depart_ts)}</span></div>
+<div class="rapport-row"><span>Durée réelle</span><span>${fmtDuree(data.arrivee_ts, data.depart_ts)}</span></div>
+${j.notes ? `<div class="rapport-row"><span>Notes</span><span>${j.notes}</span></div>` : ''}
+${(data.photos||[]).length ? `<div class="rapport-photos">${data.photos.map(p=>`<img src="${p.url}">`).join('')}</div>` : '<p class="empty-note">Aucune photo pour ce job.</p>'}
+${sectionEnvoiClient}
+<div class="modal-btns">
+<button class="btn-fermer" id="btnFermerRapport2">Fermer</button>
+<button class="btn-print" onclick="window.print()">Imprimer / PDF</button>
+</div>
+`;
+document.getElementById('btnFermerRapport').addEventListener('click', fermerRapport);
+document.getElementById('btnFermerRapport2').addEventListener('click', fermerRapport);
+const btnEnvoyer = document.getElementById('btnEnvoyerRapportClient');
+if(btnEnvoyer) btnEnvoyer.addEventListener('click', ()=>envoyerRapportClient(jobId));
+}catch(err){
+modal.innerHTML = `<p class="empty-note">Impossible de charger le rapport (${err.message}).</p>
+<div class="modal-btns"><button class="btn-fermer" onclick="document.getElementById('modalRapportBg').style.display='none'">Fermer</button></div>`;
+}
 }
 function fermerRapport(){
-  document.getElementById('modalRapportBg').style.display = 'none';
+document.getElementById('modalRapportBg').style.display = 'none';
 }
-
+async function envoyerRapportClient(jobId){
+const notes = document.getElementById('inpNoteFinJob').value.trim();
+const annees = document.getElementById('inpAnneesFinJob').value || 2;
+const btn = document.getElementById('btnEnvoyerRapportClient');
+btn.disabled = true;
+btn.textContent = 'Envoi…';
+try{
+const res = await appelerTechApp({ action:'envoyer_rapport_client', job_id: jobId, notes, annees });
+if(res.ignore){
+showToast('Client désinscrit — rien envoyé');
+} else {
+showToast('Rapport envoyé au client');
+}
+fermerRapport();
+}catch(err){
+showToast(`Erreur: ${err.message}`);
+btn.disabled = false;
+btn.textContent = '📨 Envoyer le rapport au client';
+}
+}
 /* ============================================================
-   Nouveau rendez-vous rapide — seules la date et l'heure de début
-   sont obligatoires, tout le reste (client, van, adresse...) peut
-   être laissé vide et complété plus tard.
-   ============================================================ */
+Nouveau rendez-vous rapide — seules la date et l'heure de début
+sont obligatoires, tout le reste (client, van, adresse...) peut
+être laissé vide et complété plus tard.
+============================================================ */
 document.getElementById('btnNouveauRdv').addEventListener('click', ouvrirNouveauRdv);
 
 function ouvrirNouveauRdv(){
-  const bg = document.getElementById('modalNouveauBg');
-  const modal = document.getElementById('modalNouveau');
-  const optionsVan = vansCourants.map(v=>`<option value="${v.id}">${v.nom}</option>`).join('');
-  modal.innerHTML = `
-    <button class="modal-close" id="btnFermerNouveau">×</button>
-    <h2>Nouveau rendez-vous</h2>
-    <div class="sub">Seules la date et l'heure de début sont obligatoires — le reste peut être complété plus tard (ex: pour juste bloquer une plage).</div>
-    <div class="form-grid">
-      <label>Date *</label>
-      <input type="date" id="inpNvDate" value="${toISODate(dateCourante)}">
-      <label>Heure début *</label>
-      <input type="time" id="inpNvHeureDebut">
-      <label>Heure fin</label>
-      <input type="time" id="inpNvHeureFin" placeholder="1h par défaut">
-      <label>Van</label>
-      <select id="inpNvVan"><option value="">Aucune pour l'instant</option>${optionsVan}</select>
-      <label>Nom client</label>
-      <input type="text" id="inpNvNom" placeholder="optionnel">
-      <label>Téléphone</label>
-      <input type="text" id="inpNvTelephone" placeholder="optionnel">
-      <label>Courriel</label>
-      <input type="text" id="inpNvCourriel" placeholder="optionnel">
-      <label>Adresse</label>
-      <input type="text" id="inpNvAdresse" placeholder="optionnel">
-      <label>Note</label>
-      <textarea id="inpNvNotes" rows="2" placeholder="ex: pas disponible, job chez client X"></textarea>
-    </div>
-    <div class="modal-btns">
-      <button class="btn-fermer" id="btnFermerNouveau2">Annuler</button>
-      <button class="btn-print" id="btnCreerRdv">Créer</button>
-    </div>
-  `;
-  bg.style.display = 'flex';
-  document.getElementById('btnFermerNouveau').addEventListener('click', fermerNouveau);
-  document.getElementById('btnFermerNouveau2').addEventListener('click', fermerNouveau);
-  document.getElementById('btnCreerRdv').addEventListener('click', creerRdvRapide);
+const bg = document.getElementById('modalNouveauBg');
+const modal = document.getElementById('modalNouveau');
+const optionsVan = vansCourants.map(v=>`<option value="${v.id}">${v.nom}</option>`).join('');
+modal.innerHTML = `
+<button class="modal-close" id="btnFermerNouveau">×</button>
+<h2>Nouveau rendez-vous</h2>
+<div class="sub">Seules la date et l'heure de début sont obligatoires — le reste peut être complété plus tard (ex: pour juste bloquer une plage).</div>
+<div class="form-grid">
+<label>Date *</label>
+<input type="date" id="inpNvDate" value="${toISODate(dateCourante)}">
+<label>Heure début *</label>
+<input type="time" id="inpNvHeureDebut">
+<label>Heure fin</label>
+<input type="time" id="inpNvHeureFin" placeholder="1h par défaut">
+<label>Van</label>
+<select id="inpNvVan"><option value="">Aucune pour l'instant</option>${optionsVan}</select>
+<label>Nom client</label>
+<input type="text" id="inpNvNom" placeholder="optionnel">
+<label>Téléphone</label>
+<input type="text" id="inpNvTelephone" placeholder="optionnel">
+<label>Courriel</label>
+<input type="text" id="inpNvCourriel" placeholder="optionnel">
+<label>Adresse</label>
+<input type="text" id="inpNvAdresse" placeholder="optionnel">
+<label>Note</label>
+<textarea id="inpNvNotes" rows="2" placeholder="ex: pas disponible, job chez client X"></textarea>
+</div>
+<div class="modal-btns">
+<button class="btn-fermer" id="btnFermerNouveau2">Annuler</button>
+<button class="btn-print" id="btnCreerRdv">Créer</button>
+</div>
+`;
+bg.style.display = 'flex';
+document.getElementById('btnFermerNouveau').addEventListener('click', fermerNouveau);
+document.getElementById('btnFermerNouveau2').addEventListener('click', fermerNouveau);
+document.getElementById('btnCreerRdv').addEventListener('click', creerRdvRapide);
 }
 
 function fermerNouveau(){
-  document.getElementById('modalNouveauBg').style.display = 'none';
+document.getElementById('modalNouveauBg').style.display = 'none';
 }
 
 async function creerRdvRapide(){
-  const date = document.getElementById('inpNvDate').value;
-  const heureDebut = document.getElementById('inpNvHeureDebut').value;
-  if(!date || !heureDebut){
-    showToast('La date et l\'heure de début sont requises');
-    return;
-  }
-  const payload = {
-    action:'creer_rdv_rapide',
-    tech_id: techId,
-    date,
-    heure_debut: heureDebut,
-    heure_fin: document.getElementById('inpNvHeureFin').value || undefined,
-    van_id: document.getElementById('inpNvVan').value || null,
-    nom: document.getElementById('inpNvNom').value,
-    telephone: document.getElementById('inpNvTelephone').value,
-    courriel: document.getElementById('inpNvCourriel').value,
-    adresse: document.getElementById('inpNvAdresse').value,
-    notes: document.getElementById('inpNvNotes').value,
-  };
-  const btn = document.getElementById('btnCreerRdv');
-  btn.disabled = true;
-  btn.textContent = 'Création…';
-  try{
-    await appelerTechApp(payload);
-    showToast('Rendez-vous créé');
-    fermerNouveau();
-    if(date !== toISODate(dateCourante)){
-      const [an, mo, jr] = date.split('-').map(Number);
-      dateCourante = new Date(an, mo-1, jr);
-      renderDateLbl();
-    }
-    await chargerJournee();
-  }catch(err){
-    showToast(`Erreur: ${err.message}`);
-    btn.disabled = false;
-    btn.textContent = 'Créer';
-  }
+const date = document.getElementById('inpNvDate').value;
+const heureDebut = document.getElementById('inpNvHeureDebut').value;
+if(!date || !heureDebut){
+showToast('La date et l\'heure de début sont requises');
+return;
+}
+const payload = {
+action:'creer_rdv_rapide',
+tech_id: techId,
+date,
+heure_debut: heureDebut,
+heure_fin: document.getElementById('inpNvHeureFin').value || undefined,
+van_id: document.getElementById('inpNvVan').value || null,
+nom: document.getElementById('inpNvNom').value,
+telephone: document.getElementById('inpNvTelephone').value,
+courriel: document.getElementById('inpNvCourriel').value,
+adresse: document.getElementById('inpNvAdresse').value,
+notes: document.getElementById('inpNvNotes').value,
+};
+const btn = document.getElementById('btnCreerRdv');
+btn.disabled = true;
+btn.textContent = 'Création…';
+try{
+await appelerTechApp(payload);
+showToast('Rendez-vous créé');
+fermerNouveau();
+if(date !== toISODate(dateCourante)){
+const [an, mo, jr] = date.split('-').map(Number);
+dateCourante = new Date(an, mo-1, jr);
+renderDateLbl();
+}
+await chargerJournee();
+}catch(err){
+showToast(`Erreur: ${err.message}`);
+btn.disabled = false;
+btn.textContent = 'Créer';
+}
 }
 
 /* ============================================================
-   Démarrage
-   ============================================================ */
+Démarrage
+============================================================ */
 renderDateLbl();
 initTechPicker(false);
 if(techId) chargerJournee();
