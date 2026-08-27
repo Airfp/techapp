@@ -411,13 +411,14 @@ if(!dejaArrive){
 actions += `<button class="btn-action" data-action="arrivee" data-job="${j.id}">📍 Arrivé</button>`;
 } else if(!dejaParti){
 actions += `<button class="btn-action" data-action="depart" data-job="${j.id}">🏁 Parti</button>`;
-} else {
-actions += `<button class="btn-action secondary" data-action="rapport" data-job="${j.id}">📋 Voir le rapport</button>`;
 }
+// Le rapport (et l'ajout de photos, qui s'y fait maintenant exclusivement)
+// est accessible en tout temps, pas seulement une fois la job terminée —
+// utile pour ajouter des photos dès l'arrivée par exemple.
+actions += `<button class="btn-action secondary" data-action="rapport" data-job="${j.id}">📋 Rapport</button>`;
 if(j.adresse || (j.lat!=null && j.lng!=null)){
 actions += `<a class="btn-action secondary" href="${urlGoogleMaps(j)}" target="_blank" rel="noopener">🗺️ Carte</a>`;
 }
-actions += `<button class="btn-action photo" data-action="photo" data-job="${j.id}">📷 Photo</button>`;
 actions += `<button class="btn-action secondary" data-action="notes" data-job="${j.id}">📝 Notes</button>`;
 actions += `<button class="btn-action annuler" data-action="annuler" data-job="${j.id}">❌ Annuler</button>`;
 
@@ -520,9 +521,6 @@ b.addEventListener('click', ()=>ouvrirHoraireModal(b.dataset.job));
 });
 document.querySelectorAll('.btn-action[data-action="rapport"]').forEach(b=>{
 b.addEventListener('click', ()=>ouvrirRapport(b.dataset.job));
-});
-document.querySelectorAll('.btn-action[data-action="photo"]').forEach(b=>{
-b.addEventListener('click', ()=>declencherUploadPhoto(b.dataset.job));
 });
 document.querySelectorAll('.btn-action[data-action="notes"]').forEach(b=>{
 b.addEventListener('click', ()=>ouvrirNotes(b.dataset.job));
@@ -774,7 +772,9 @@ const inputPhoto = document.createElement('input');
 inputPhoto.type = 'file';
 inputPhoto.accept = 'image/*';
 // Pas d'attribut "capture" — le téléphone propose alors le choix entre
-// prendre une photo ET piger dans la galerie, plutôt que forcer la caméra.
+// prendre une photo et piger dans la galerie. Il n'existe pas d'attribut
+// web pour cacher l'option caméra et ne garder que la galerie — c'est le
+// téléphone qui contrôle ce sélecteur, pas le site.
 inputPhoto.multiple = true;
 document.body.appendChild(inputPhoto);
 
@@ -836,14 +836,15 @@ return { base64, filename: f.name };
 
 inputPhoto.addEventListener('change', async ()=>{
 const fichiers = [...inputPhoto.files];
-if(!fichiers.length || !jobPourUpload) return;
+const jobConcerne = jobPourUpload;
+if(!fichiers.length || !jobConcerne) return;
 showToast(`Envoi de ${fichiers.length} photo(s)…`);
 let ok = 0;
 for(const f of fichiers){
 try{
 const { base64, filename } = await compresserPhoto(f);
 await appelerTechApp({
-action:'photo_upload', job_id: jobPourUpload, tech_id: techId,
+action:'photo_upload', job_id: jobConcerne, tech_id: techId,
 image_base64: base64, filename
 });
 ok++;
@@ -853,6 +854,13 @@ console.error(err);
 }
 showToast(`${ok}/${fichiers.length} photo(s) envoyée(s)`);
 await chargerJournee();
+// Si le rapport de ce job est ouvert (c'est maintenant le seul endroit
+// d'où on peut ajouter des photos), on le rafraîchit pour montrer les
+// nouvelles photos et remettre à jour le compte minimum requis.
+const bgRapport = document.getElementById('modalRapportBg');
+if(bgRapport.style.display === 'flex' && bgRapport.dataset.jobOuvert === jobConcerne){
+await ouvrirRapport(jobConcerne);
+}
 });
 
 /* ============================================================
@@ -869,16 +877,30 @@ const h = Math.floor(min/60), m = min%60;
 return h>0 ? `${h} h ${m} min` : `${m} min`;
 }
 
+const PHOTOS_MIN_ENVOI = 2;
+
 async function ouvrirRapport(jobId){
 const bg = document.getElementById('modalRapportBg');
 const modal = document.getElementById('modalRapport');
 bg.style.display = 'flex';
+bg.dataset.jobOuvert = jobId;
 modal.innerHTML = '<p class="empty-note">Chargement du rapport…</p>';
 try{
 const data = await appelerTechApp({ action:'rapport', job_id: jobId });
 const j = data.job, c = data.client || {};
 const rapportDejaEnvoye = !!data.rappel;
 const anneesDefaut = data.rappel?.annees_recommandees || 3;
+const nbPhotos = (data.photos||[]).length;
+const assezDePhotos = nbPhotos >= PHOTOS_MIN_ENVOI;
+
+const sectionPhotos = `<div style="margin-top:14px;">
+<div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:8px;">
+<span style="font-size:12.5px; color:var(--ink-soft);">Photos (minimum ${PHOTOS_MIN_ENVOI} requises)</span>
+<button class="btn-action secondary" id="btnAjouterPhotos" style="padding:6px 12px; font-size:13px;">📷 Ajouter des photos</button>
+</div>
+${nbPhotos ? `<div class="rapport-photos">${data.photos.map(p=>`<img src="${p.url}">`).join('')}</div>` : '<p class="empty-note">Aucune photo pour ce job.</p>'}
+${!assezDePhotos ? `<p class="empty-note" style="color:var(--amber, #B8791A); padding:8px 0 0;">⚠️ Ajoute au moins ${PHOTOS_MIN_ENVOI} photos avant d'envoyer le rapport (actuellement ${nbPhotos}).</p>` : ''}
+</div>`;
 
 const sectionEnvoiClient = `<div style="margin-top:18px; padding-top:14px; border-top:1.5px solid var(--line);">
 <h3 style="font-size:13px; text-transform:uppercase; font-family:var(--font-mono); color:var(--teal-dark); margin:0 0 10px;">Rapport client</h3>
@@ -890,7 +912,7 @@ ${rapportDejaEnvoye ? `<p class="empty-note" style="padding:0 0 10px;">✅ Déj�
 <input type="range" id="inpAnneesFinJob" min="1" max="5" step="1" value="${anneesDefaut}" style="flex:1; accent-color:var(--teal);">
 <span id="lblAnneesFinJob" style="font-family:var(--font-mono); font-size:14px; font-weight:600; color:var(--teal-dark); min-width:42px; text-align:right;">${anneesDefaut} an${anneesDefaut>1?'s':''}</span>
 </div>
-<button class="btn-action" id="btnEnvoyerRapportClient" style="width:100%;">📨 ${rapportDejaEnvoye ? 'Renvoyer' : 'Envoyer'} le rapport au client</button>
+<button class="btn-action" id="btnEnvoyerRapportClient" style="width:100%;" ${assezDePhotos?'':'disabled'}>📨 ${rapportDejaEnvoye ? 'Renvoyer' : 'Envoyer'} le rapport au client</button>
 </div>`;
 
 modal.innerHTML = `
@@ -906,7 +928,7 @@ modal.innerHTML = `
 <div class="rapport-row"><span>Départ réel</span><span>${fmtHeure(data.depart_ts)}</span></div>
 <div class="rapport-row"><span>Durée réelle</span><span>${fmtDuree(data.arrivee_ts, data.depart_ts)}</span></div>
 ${j.notes ? `<div class="rapport-row"><span>Notes</span><span>${j.notes}</span></div>` : ''}
-${(data.photos||[]).length ? `<div class="rapport-photos">${data.photos.map(p=>`<img src="${p.url}">`).join('')}</div>` : '<p class="empty-note">Aucune photo pour ce job.</p>'}
+${sectionPhotos}
 ${sectionEnvoiClient}
 <div class="modal-btns">
 <button class="btn-fermer" id="btnFermerRapport2">Fermer</button>
@@ -924,6 +946,8 @@ document.getElementById('lblAnneesFinJob').textContent = `${v} an${v>1?'s':''}`;
 });
 const btnEditServices = document.getElementById('btnEditServices');
 if(btnEditServices) btnEditServices.addEventListener('click', ()=>ouvrirServicesModal(jobId, j.service_ids||[]));
+const btnAjouterPhotos = document.getElementById('btnAjouterPhotos');
+if(btnAjouterPhotos) btnAjouterPhotos.addEventListener('click', ()=>declencherUploadPhoto(jobId));
 }catch(err){
 modal.innerHTML = `<p class="empty-note">Impossible de charger le rapport (${err.message}).</p>
 <div class="modal-btns"><button class="btn-fermer" onclick="document.getElementById('modalRapportBg').style.display='none'">Fermer</button></div>`;
@@ -933,6 +957,11 @@ function fermerRapport(){
 document.getElementById('modalRapportBg').style.display = 'none';
 }
 async function envoyerRapportClient(jobId){
+const nbPhotosActuel = document.querySelectorAll('.rapport-photos img').length;
+if(nbPhotosActuel < PHOTOS_MIN_ENVOI){
+showToast(`Ajoute au moins ${PHOTOS_MIN_ENVOI} photos avant d'envoyer`);
+return;
+}
 const notes = document.getElementById('inpNoteFinJob').value.trim();
 const annees = document.getElementById('inpAnneesFinJob').value || 3;
 const btn = document.getElementById('btnEnvoyerRapportClient');
