@@ -915,7 +915,7 @@ const sectionEnvoiClient = `<div style="margin-top:18px; padding-top:14px; borde
 <h3 style="font-size:13px; text-transform:uppercase; font-family:var(--font-mono); color:var(--teal-dark); margin:0 0 10px;">Rapport client</h3>
 ${rapportDejaEnvoye ? `<p class="empty-note" style="padding:0 0 10px;">✅ Déjà envoyé au client — recommandation actuelle : ${anneesDefaut} an(s). Tu peux le renvoyer si quelque chose a changé.</p>` : ''}
 <label style="font-size:12.5px; color:var(--ink-soft);">Note pour le client (optionnel)</label>
-<textarea id="inpNoteFinJob" rows="2" placeholder="ex: recommandation, moisissure, constatation..." style="width:100%; margin:6px 0 12px; padding:10px; border:1.5px solid var(--line); border-radius:9px; font-family:var(--font-body); font-size:14px; box-sizing:border-box;"></textarea>
+<textarea id="inpNoteFinJob" rows="2" placeholder="ex: recommandation, moisissure, constatation..." style="width:100%; margin:6px 0 12px; padding:10px; border:1.5px solid var(--line); border-radius:9px; font-family:var(--font-body); font-size:14px; box-sizing:border-box;">${(j.note_client||'').replace(/</g,'&lt;')}</textarea>
 <label style="font-size:12.5px; color:var(--ink-soft);">Entretien recommandé dans…</label>
 <div style="display:flex; align-items:center; gap:12px; margin:6px 0 12px;">
 <input type="range" id="inpAnneesFinJob" min="1" max="5" step="1" value="${anneesDefaut}" style="flex:1; accent-color:var(--teal);">
