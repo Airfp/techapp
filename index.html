@@ -100,6 +100,9 @@ header.top{display:flex; align-items:center; justify-content:space-between; padd
 /* ---- rdv sans van assignée ---- */
 .sans-van-header{font-size:13px; font-weight:600; color:var(--amber); margin:4px 2px 10px;}
 .job-card.sans-van{border-color:var(--amber);}
+
+/* ---- rapport déjà envoyé au client — job entièrement complétée ---- */
+.job-card.rapport-envoye{background:var(--green-tint); border-color:var(--green);}
 .prompt-van{background:var(--amber-tint); color:var(--amber); border-radius:9px; padding:8px 10px; font-size:12.5px; margin-bottom:10px; display:flex; align-items:center; gap:8px; flex-wrap:wrap;}
 .btn-van-choix{background:var(--amber); color:#fff; border:none; border-radius:7px; padding:6px 12px; font-family:var(--font-body); font-size:12px; font-weight:600; cursor:pointer;}
 
@@ -130,6 +133,7 @@ header.top{display:flex; align-items:center; justify-content:space-between; padd
 .modal-btns button{flex:1; padding:12px; border-radius:10px; font-family:var(--font-body); font-size:14px; font-weight:600; cursor:pointer;}
 .btn-print{background:var(--teal); color:#fff; border:1.5px solid var(--teal);}
 .btn-fermer{background:var(--surface); color:var(--ink); border:1.5px solid var(--line);}
+.btn-danger-outline{background:var(--surface); color:var(--red); border:1.5px solid var(--red); width:100%; padding:12px; border-radius:10px; font-family:var(--font-body); font-size:14px; font-weight:600; cursor:pointer; margin-top:12px;}
 
 input[type=file]{display:none;}
 .toast{position:fixed; bottom:18px; left:50%; transform:translateX(-50%); background:var(--ink); color:#fff; padding:10px 18px; border-radius:10px; font-size:13px; z-index:300; opacity:0; transition:opacity .25s;}
@@ -420,7 +424,9 @@ if(j.adresse || (j.lat!=null && j.lng!=null)){
 actions += `<a class="btn-action secondary" href="${urlGoogleMaps(j)}" target="_blank" rel="noopener">🗺️ Carte</a>`;
 }
 actions += `<button class="btn-action secondary" data-action="notes" data-job="${j.id}">📝 Notes</button>`;
-actions += `<button class="btn-action annuler" data-action="annuler" data-job="${j.id}">❌ Annuler</button>`;
+// L'annulation d'un rendez-vous se fait maintenant depuis la modale
+// "Modifier l'heure prévue" (icône ✏️ à côté de l'heure), plutôt que
+// par un bouton séparé sur la fiche.
 
 const sansVan = j.van_id == null;
 const promptVan = (sansVan && vansCourants.length)
@@ -445,7 +451,7 @@ if(dejaParti) heuresReelles += `<span class="heure-reelle-tag" data-action="corr
 heuresReelles += '</div>';
 }
 
-return `<div class="job-card${sansVan?' sans-van':''}" data-jobcard="${j.id}">
+return `<div class="job-card${sansVan?' sans-van':''}${j.rapport_envoye?' rapport-envoye':''}" data-jobcard="${j.id}">
 ${promptVan}
 ${transfertVan}
 <div class="heure">${j.heure_debut} – ${j.heure_fin} <button class="btn-heure-edit" data-action="modifier-heure" data-job="${j.id}" title="Modifier l'heure prévue">✏️</button></div>
@@ -524,9 +530,6 @@ b.addEventListener('click', ()=>ouvrirRapport(b.dataset.job));
 });
 document.querySelectorAll('.btn-action[data-action="notes"]').forEach(b=>{
 b.addEventListener('click', ()=>ouvrirNotes(b.dataset.job));
-});
-document.querySelectorAll('.btn-action[data-action="annuler"]').forEach(b=>{
-b.addEventListener('click', ()=>confirmerAnnulation(b.dataset.job));
 });
 document.querySelectorAll('.btn-van-choix').forEach(b=>{
 b.addEventListener('click', ()=>assignerVan(b.dataset.job, b.dataset.van));
@@ -613,17 +616,23 @@ modal.innerHTML = `
 <input type="time" id="inpHoraireFin" value="${job.heure_fin}">
 </div>
 <div class="modal-btns">
-<button class="btn-fermer" id="btnFermerHoraire2">Annuler</button>
+<button class="btn-fermer" id="btnFermerHoraire2">Fermer</button>
 <button class="btn-print" id="btnConfirmerHoraire">Enregistrer</button>
 </div>
+<button class="btn-danger-outline" id="btnAnnulerRdv">❌ Annuler le rendez-vous</button>
 `;
 bg.style.display = 'flex';
 document.getElementById('btnFermerHoraire').addEventListener('click', fermerHoraireModal);
 document.getElementById('btnFermerHoraire2').addEventListener('click', fermerHoraireModal);
 document.getElementById('btnConfirmerHoraire').addEventListener('click', ()=>confirmerHoraire(jobId));
+document.getElementById('btnAnnulerRdv').addEventListener('click', ()=>annulerDepuisHoraireModal(jobId));
 }
 function fermerHoraireModal(){
 document.getElementById('modalHoraireBg').style.display = 'none';
+}
+async function annulerDepuisHoraireModal(jobId){
+fermerHoraireModal();
+await confirmerAnnulation(jobId);
 }
 async function confirmerHoraire(jobId){
 const date = document.getElementById('inpHoraireDate').value;
