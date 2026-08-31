@@ -43,6 +43,10 @@ header.top{display:flex; align-items:center; justify-content:space-between; padd
 /* ---- colonnes vans ---- */
 .vans-grid{display:grid; grid-template-columns:1fr 1fr; gap:16px;}
 @media(max-width:680px){.vans-grid{grid-template-columns:1fr;}}
+.vans-grid.vans-grid-single{grid-template-columns:1fr; max-width:520px; margin:0 auto;}
+
+/* ---- bascule Van 1 / Van 2 / Les deux ---- */
+.van-toggle{display:flex; justify-content:center; gap:8px; margin-bottom:16px; flex-wrap:wrap;}
 .van-col h3{font-size:14px; font-family:var(--font-mono); text-transform:uppercase; letter-spacing:.04em; color:var(--teal-dark); margin-bottom:10px; padding-bottom:8px; border-bottom:1.5px solid var(--line);}
 .empty-note{color:var(--ink-soft); font-size:13.5px; font-style:italic; padding:10px 2px;}
 
@@ -176,6 +180,8 @@ body *{visibility:hidden;}
 
 <button class="btn-nouveau-rdv" id="btnNouveauRdv">+ Nouveau RDV</button>
 
+<div class="van-toggle" id="vanToggle" style="display:none;"></div>
+
 <div id="sansVanSection"></div>
 
 <div class="vans-grid" id="vansGrid">
@@ -247,6 +253,44 @@ setTimeout(()=>t.classList.remove('show'), 2200);
 
 function toISODate(d){
 return d.toISOString ? new Date(d.getTime() - d.getTimezoneOffset()*60000).toISOString().slice(0,10) : d;
+}
+
+function chiffresTelephone(tel){
+return (tel||'').replace(/\D/g,'');
+}
+function telFormatte(tel){
+const d = chiffresTelephone(tel);
+if(d.length===10) return `${d.slice(0,3)}-${d.slice(3,6)}-${d.slice(6)}`;
+if(d.length===11 && d[0]==='1') return `${d.slice(1,4)}-${d.slice(4,7)}-${d.slice(7)}`;
+return tel||'';
+}
+function telE164(tel){
+const d = chiffresTelephone(tel);
+if(!d) return '';
+if(d.length===10) return `+1${d}`;
+if(d.length===11 && d[0]==='1') return `+${d}`;
+return `+${d}`;
+}
+async function copierTelephone(tel){
+const formatte = telFormatte(tel);
+try{
+await navigator.clipboard.writeText(formatte);
+showToast(`Numéro copié : ${formatte}`);
+}catch(err){
+try{
+const ta = document.createElement('textarea');
+ta.value = formatte;
+ta.style.position = 'fixed';
+ta.style.opacity = '0';
+document.body.appendChild(ta);
+ta.focus(); ta.select();
+document.execCommand('copy');
+document.body.removeChild(ta);
+showToast(`Numéro copié : ${formatte}`);
+}catch(err2){
+showToast('Impossible de copier le numéro');
+}
+}
 }
 
 /* ============================================================
@@ -423,6 +467,10 @@ actions += `<button class="btn-action secondary" data-action="rapport" data-job=
 if(j.adresse || (j.lat!=null && j.lng!=null)){
 actions += `<a class="btn-action secondary" href="${urlGoogleMaps(j)}" target="_blank" rel="noopener">🗺️ Carte</a>`;
 }
+if(j.client_telephone){
+actions += `<button class="btn-action secondary" data-action="copier-tel" data-tel="${j.client_telephone}">📋 Copier no</button>`;
+actions += `<a class="btn-action secondary" href="sms:${telE164(j.client_telephone)}" data-action="texter">💬 Texto</a>`;
+}
 actions += `<button class="btn-action secondary" data-action="notes" data-job="${j.id}">📝 Notes</button>`;
 // L'annulation d'un rendez-vous se fait maintenant depuis la modale
 // "Modifier l'heure prévue" (icône ✏️ à côté de l'heure), plutôt que
@@ -467,6 +515,7 @@ ${heuresReelles}
 
 let jobsCourants = [];
 let vansCourants = [];
+let vanFiltre = localStorage.getItem('af_van_filtre') || 'toutes';
 
 function fmtHeureCourte(ts){
 if(!ts) return '—';
@@ -486,7 +535,32 @@ grid.innerHTML = `<p class="empty-note">Impossible de charger la journée (${err
 }
 }
 
+function renderVanToggle(){
+const div = document.getElementById('vanToggle');
+if(!vansCourants.length){
+div.style.display = 'none';
+div.innerHTML = '';
+return;
+}
+if(vanFiltre!=='toutes' && !vansCourants.some(v=>v.id===vanFiltre)){
+vanFiltre = 'toutes';
+localStorage.setItem('af_van_filtre', vanFiltre);
+}
+div.style.display = 'flex';
+const boutons = [`<button class="toggle-btn${vanFiltre==='toutes'?' active':''}" data-van-filtre="toutes">Les deux</button>`]
+.concat(vansCourants.map(v=>`<button class="toggle-btn${vanFiltre===v.id?' active':''}" data-van-filtre="${v.id}">${v.nom}</button>`));
+div.innerHTML = boutons.join('');
+div.querySelectorAll('[data-van-filtre]').forEach(b=>{
+b.addEventListener('click', ()=>{
+vanFiltre = b.dataset.vanFiltre;
+localStorage.setItem('af_van_filtre', vanFiltre);
+renderVansGrid();
+});
+});
+}
+
 function renderVansGrid(){
+renderVanToggle();
 const grid = document.getElementById('vansGrid');
 const sansVanDiv = document.getElementById('sansVanSection');
 const sansVan = jobsCourants.filter(j=>j.van_id==null);
@@ -499,7 +573,9 @@ grid.innerHTML = '<p class="empty-note">Aucune van configurée.</p>';
 attacherActionsJobs();
 return;
 }
-grid.innerHTML = vansCourants.map(v=>{
+const vansAffichees = vanFiltre==='toutes' ? vansCourants : vansCourants.filter(v=>v.id===vanFiltre);
+grid.classList.toggle('vans-grid-single', vansAffichees.length===1);
+grid.innerHTML = vansAffichees.map(v=>{
 const jobsVan = jobsCourants.filter(j=>j.van_id===v.id);
 const contenu = jobsVan.length
 ? jobsVan.map(jobCardHtml).join('')
@@ -530,6 +606,9 @@ b.addEventListener('click', ()=>ouvrirRapport(b.dataset.job));
 });
 document.querySelectorAll('.btn-action[data-action="notes"]').forEach(b=>{
 b.addEventListener('click', ()=>ouvrirNotes(b.dataset.job));
+});
+document.querySelectorAll('[data-action="copier-tel"]').forEach(b=>{
+b.addEventListener('click', ()=>copierTelephone(b.dataset.tel));
 });
 document.querySelectorAll('.btn-van-choix').forEach(b=>{
 b.addEventListener('click', ()=>assignerVan(b.dataset.job, b.dataset.van));
