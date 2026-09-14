@@ -667,6 +667,49 @@ showToast(`Erreur: ${err.message}`);
 }
 
 /* ============================================================
+Petits utilitaires partagés par les deux modales d'édition des
+services vendus (modalHoraire et modalServices) — case à cocher +
+prix éditable à côté. Le prix est pré-rempli avec le prix du
+catalogue (ou le prix déjà entré pour ce rendez-vous, si présent)
+mais reste modifiable, car le prix réellement facturé varie
+(rabais, ententes particulières...). C'est ce prix entré par le
+technicien, et lui seul, qui est envoyé au webhook de confirmation
+— jamais le prix catalogue directement.
+============================================================ */
+function ligneServiceAvecPrix(s, prefix, coche, prixActuel){
+const prixDefaut = (prixActuel!=null && prixActuel!=='') ? prixActuel : (s.prix_promo ?? s.prix_base ?? '');
+return `
+<div class="check-row" style="display:flex; align-items:center; gap:10px; padding:8px 0; border-bottom:1px solid var(--line); font-size:14px;">
+<input type="checkbox" id="chk${prefix}_${s.id}" data-service-id="${s.id}" ${coche?'checked':''} style="width:18px; height:18px; accent-color:var(--teal);">
+<label for="chk${prefix}_${s.id}" style="cursor:pointer; flex:1;">${s.nom}</label>
+<span style="display:flex; align-items:center; gap:3px; color:var(--ink-soft); font-size:13px;">
+<span>$</span>
+<input type="number" inputmode="decimal" min="0" step="1" id="prix${prefix}_${s.id}" data-prix-for="${s.id}" value="${prixDefaut}" ${coche?'':'disabled'} style="width:64px; padding:4px 6px; border:1px solid var(--line); border-radius:6px; font-family:var(--font-mono); font-size:13px;">
+</span>
+</div>`;
+}
+function activerBasculePrixServices(modal, prefix){
+modal.querySelectorAll(`[id^="chk${prefix}_"]`).forEach(chk=>{
+chk.addEventListener('change', ()=>{
+const p = document.getElementById(`prix${prefix}_${chk.dataset.serviceId}`);
+if(p) p.disabled = !chk.checked;
+});
+});
+}
+function lireServicesEtPrix(modal, prefix){
+const cases = [...modal.querySelectorAll(`[id^="chk${prefix}_"]`)];
+const cochees = cases.filter(c=>c.checked);
+const service_ids = cochees.map(c=>c.dataset.serviceId);
+const services_prix = {};
+cochees.forEach(c=>{
+const p = document.getElementById(`prix${prefix}_${c.dataset.serviceId}`);
+const v = p ? Number(p.value) : NaN;
+if(Number.isFinite(v) && v>=0) services_prix[c.dataset.serviceId] = v;
+});
+return { cases, service_ids, services_prix };
+}
+
+/* ============================================================
 Modifier l'heure (et la date) prévue d'un rendez-vous
 ============================================================ */
 async function ouvrirHoraireModal(jobId){
@@ -685,11 +728,10 @@ appelerTechApp({ action:'rapport', job_id: jobId }),
 appelerTechApp({ action:'services_liste' }),
 ]);
 const serviceIdsActuels = new Set(rapportData.job?.service_ids || []);
-const lignesServices = (servicesData.services||[]).map(s=>`
-<div class="check-row" style="display:flex; align-items:center; gap:10px; padding:8px 0; border-bottom:1px solid var(--line); font-size:14px;">
-<input type="checkbox" id="chkHoraireService_${s.id}" data-service-id="${s.id}" ${serviceIdsActuels.has(s.id)?'checked':''} style="width:18px; height:18px; accent-color:var(--teal);">
-<label for="chkHoraireService_${s.id}" style="cursor:pointer;">${s.nom}</label>
-</div>`).join('');
+const prixActuels = rapportData.job?.services_prix || {};
+const lignesServices = (servicesData.services||[]).map(s=>
+ligneServiceAvecPrix(s, 'HoraireService', serviceIdsActuels.has(s.id), prixActuels[s.id])
+).join('');
 modal.innerHTML = `
 <button class="modal-close" id="btnFermerHoraire">×</button>
 <h2>Modifier le rendez-vous</h2>
@@ -716,6 +758,7 @@ document.getElementById('btnFermerHoraire').addEventListener('click', fermerHora
 document.getElementById('btnFermerHoraire2').addEventListener('click', fermerHoraireModal);
 document.getElementById('btnConfirmerHoraire').addEventListener('click', ()=>confirmerHoraire(jobId));
 document.getElementById('btnAnnulerRdv').addEventListener('click', ()=>annulerDepuisHoraireModal(jobId));
+activerBasculePrixServices(modal, 'HoraireService');
 }catch(err){
 modal.innerHTML = `<p class="empty-note">Impossible de charger (${err.message}).</p>
 <div class="modal-btns"><button class="btn-fermer" onclick="document.getElementById('modalHoraireBg').style.display='none'">Fermer</button></div>`;
@@ -733,13 +776,13 @@ const date = document.getElementById('inpHoraireDate').value;
 const heure_debut = document.getElementById('inpHoraireDebut').value;
 const heure_fin = document.getElementById('inpHoraireFin').value;
 if(!date || !heure_debut || !heure_fin){ showToast('Tous les champs sont requis'); return; }
-const cases = [...document.querySelectorAll('#modalHoraire input[type=checkbox]')];
-const service_ids = cases.filter(c=>c.checked).map(c=>c.dataset.serviceId);
+const modal = document.getElementById('modalHoraire');
+const { cases, service_ids, services_prix } = lireServicesEtPrix(modal, 'HoraireService');
 const payload = { action:'modifier_rdv', job_id: jobId, date, heure_debut, heure_fin };
 // La liste des services n'est envoyée que si elle a bien été chargée —
 // si jamais elle est vide alors qu'il y a des services au catalogue,
 // mieux vaut ne pas y toucher que de risquer de tout effacer.
-if(cases.length) payload.service_ids = service_ids;
+if(cases.length){ payload.service_ids = service_ids; payload.services_prix = services_prix; }
 try{
 await appelerTechApp(payload);
 showToast('Rendez-vous mis à jour');
@@ -756,7 +799,7 @@ rapport de job (parfois un service est ajouté ou retiré en cours
 de route). La liste des services actifs est rechargée à chaque
 ouverture pour rester à jour.
 ============================================================ */
-async function ouvrirServicesModal(jobId, serviceIdsActuels){
+async function ouvrirServicesModal(jobId, serviceIdsActuels, servicesPrixActuels){
 const bg = document.getElementById('modalServicesBg');
 const modal = document.getElementById('modalServices');
 modal.innerHTML = '<p class="empty-note">Chargement…</p>';
@@ -764,11 +807,10 @@ bg.style.display = 'flex';
 try{
 const data = await appelerTechApp({ action:'services_liste' });
 const actuelsSet = new Set(serviceIdsActuels||[]);
-const lignes = (data.services||[]).map(s=>`
-<div class="check-row" style="display:flex; align-items:center; gap:10px; padding:9px 0; border-bottom:1px solid var(--line); font-size:14.5px;">
-<input type="checkbox" id="chkService_${s.id}" data-service-id="${s.id}" ${actuelsSet.has(s.id)?'checked':''} style="width:18px; height:18px; accent-color:var(--teal);">
-<label for="chkService_${s.id}" style="cursor:pointer;">${s.nom}</label>
-</div>`).join('');
+const prixActuels = servicesPrixActuels||{};
+const lignes = (data.services||[]).map(s=>
+ligneServiceAvecPrix(s, 'Service', actuelsSet.has(s.id), prixActuels[s.id])
+).join('');
 modal.innerHTML = `
 <button class="modal-close" id="btnFermerServices">×</button>
 <h2>Modifier les services</h2>
@@ -781,6 +823,7 @@ modal.innerHTML = `
 document.getElementById('btnFermerServices').addEventListener('click', fermerServicesModal);
 document.getElementById('btnFermerServices2').addEventListener('click', fermerServicesModal);
 document.getElementById('btnConfirmerServices').addEventListener('click', ()=>confirmerServices(jobId));
+activerBasculePrixServices(modal, 'Service');
 }catch(err){
 modal.innerHTML = `<p class="empty-note">Impossible de charger les services (${err.message}).</p>
 <div class="modal-btns"><button class="btn-fermer" onclick="document.getElementById('modalServicesBg').style.display='none'">Fermer</button></div>`;
@@ -790,10 +833,10 @@ function fermerServicesModal(){
 document.getElementById('modalServicesBg').style.display = 'none';
 }
 async function confirmerServices(jobId){
-const cases = [...document.querySelectorAll('#modalServices input[type=checkbox]')];
-const service_ids = cases.filter(c=>c.checked).map(c=>c.dataset.serviceId);
+const modal = document.getElementById('modalServices');
+const { service_ids, services_prix } = lireServicesEtPrix(modal, 'Service');
 try{
-await appelerTechApp({ action:'modifier_services', job_id: jobId, service_ids });
+await appelerTechApp({ action:'modifier_services', job_id: jobId, service_ids, services_prix });
 showToast('Services mis à jour');
 fermerServicesModal();
 await chargerJournee();
@@ -1055,7 +1098,7 @@ const v = Number(inpAnnees.value);
 document.getElementById('lblAnneesFinJob').textContent = `${v} an${v>1?'s':''}`;
 });
 const btnEditServices = document.getElementById('btnEditServices');
-if(btnEditServices) btnEditServices.addEventListener('click', ()=>ouvrirServicesModal(jobId, j.service_ids||[]));
+if(btnEditServices) btnEditServices.addEventListener('click', ()=>ouvrirServicesModal(jobId, j.service_ids||[], j.services_prix||{}));
 const btnAjouterPhotos = document.getElementById('btnAjouterPhotos');
 if(btnAjouterPhotos) btnAjouterPhotos.addEventListener('click', ()=>declencherUploadPhoto(jobId));
 }catch(err){
